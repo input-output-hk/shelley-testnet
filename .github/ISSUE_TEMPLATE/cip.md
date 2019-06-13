@@ -1,6 +1,6 @@
 ---
 name: CIP
-about: Node Improvement Proposal
+about: Cardano Improvement Proposal
 
 ---
 
