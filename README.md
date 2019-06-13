@@ -1,2 +1,2 @@
 # shelley-testnet
-Support Triage for Shelley Testnet
+Community repo for Shelley testnet program
