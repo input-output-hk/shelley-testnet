@@ -5,7 +5,7 @@ Welcome to the dedicated GitHub repo for support for the Cardano Shelley testnet
 
 We will assess and triage all incoming issues in this central location and escalate them appropriately to our development teams for prompt resolution. We plan to provide support on weekdays and we work in different timezones, but 24hr support is not available at this time.
 
-Regular communication is planned and we will be providing copies of our weekly development reports here so that you are kept up to date on what is being delivered and what is planned for the testnet eras.
+Regular communication is planned and we will be providing copies of our weekly development reports here so that you are kept up to date on what is being delivered and what is planned for the testnet phases.
 
 We encourage you to share your ideas and suggestions in this central location so that we can create a library of resolutions and support for the tasks that you need to perform.
 
