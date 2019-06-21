@@ -8,3 +8,18 @@ Regular communication is planned and we will be providing copies of our weekly d
 
 We encourage you to share your ideas and suggestions in this central location so that we can create a library of resolutions and support for the tasks that you need to perform.
 
+In the mean time you can check:
+
+## Video tutorials to install the self node 
+
+[![How to install](http://img.youtube.com/vi/dhri33gWdgU/0.jpg)](https://www.youtube.com/playlist?list=PLnPTB0CuBOBzHmIMplX6BT6F3tzKOSFG5 "Shelley Testnet self node")
+
+## How-to guides
+
+- How To
+  - [Install from source](./How-to-install-from-source)
+  - [Start a self node](./How-to-start-self-node)
+  - [Send from faucet to account](./How-to-send-money-from-faucet-to-account)
+  - [Delegate from new account](./How-to-delegate-from-new-account)
+- [FAQ](Shelley-Testnet-Support)
+
