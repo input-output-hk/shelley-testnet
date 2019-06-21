@@ -17,9 +17,15 @@ In the mean time you can check:
 ## How-to guides
 
 - How To
-  - [Install from source](./wiki/How-to-install-from-source)
-  - [Start a self node](./wiki/How-to-start-self-node)
-  - [Send from faucet to account](./wiki/How-to-send-money-from-faucet-to-account)
-  - [Delegate from new account](./wiki/How-to-delegate-from-new-account)
-- [FAQ](./wiki/Shelley-Testnet-Support)
+  - [Install from source](https://github.com/input-output-hk/shelley-testnet/wiki/How-to-install-from-source)
+  - [Start a self node](https://github.com/input-output-hk/shelley-testnet/wiki/How-to-start-a-self-node)
+  - [Send from faucet to account](https://github.com/input-output-hk/shelley-testnet/wiki/How-to-send-money-from-faucet-to-account-address)
+  - [Delegate from new account](https://github.com/input-output-hk/shelley-testnet/wiki/How-to-delegate-from-new-account)
+- [FAQ](https://github.com/input-output-hk/shelley-testnet/wiki/Shelley-Testnet-Support)
 
+- How To
+  - [Install from source](https://github.com/input-output-hk/shelley-testnet/wiki/How-to-install-from-source)
+  - [Start a self node](https://github.com/input-output-hk/shelley-testnet/wiki/How-to-start-a-self-node)
+  - [Send from faucet to account](https://github.com/input-output-hk/shelley-testnet/wiki/How-to-send-money-from-the-faucet-to-an-account-address)
+  - [Delegate from a new account](https://github.com/input-output-hk/shelley-testnet/wiki/How-to-delegate-from-a-new-account)
+- [FAQ](https://github.com/input-output-hk/shelley-testnet/wiki/Shelley-Testnet-Support)
