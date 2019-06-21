@@ -17,9 +17,9 @@ In the mean time you can check:
 ## How-to guides
 
 - How To
-  - [Install from source](./How-to-install-from-source)
-  - [Start a self node](./How-to-start-self-node)
-  - [Send from faucet to account](./How-to-send-money-from-faucet-to-account)
-  - [Delegate from new account](./How-to-delegate-from-new-account)
-- [FAQ](Shelley-Testnet-Support)
+  - [Install from source](./wiki/How-to-install-from-source)
+  - [Start a self node](./wiki/How-to-start-self-node)
+  - [Send from faucet to account](./wiki/How-to-send-money-from-faucet-to-account)
+  - [Delegate from new account](./wiki/How-to-delegate-from-new-account)
+- [FAQ](./wiki/Shelley-Testnet-Support)
 
