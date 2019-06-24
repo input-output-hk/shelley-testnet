@@ -4,11 +4,14 @@ about: Cardano Improvement Proposal
 
 ---
 
-**Is your feature request related to a problem/context ? Please describe if applicable.**
-A clear and concise description of what the problem and/or context is.
+**USER STORIES**
+AS a _____ I want to _____ such that_____.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen. possible alternative solutions
+**IMPROVEMENT PROPOSAL**
+Please describe your improvement proposal. Break it down to discrete ideas if necessary.
 
-**Additional context**
-Add any other context about the feature request here.
+**CONSIDERATIONS**
+Describe any issues, challenges or trade offs that come to your mind to implement your proposal.
+
+**SEE ALSO**
+Add relevant references.
