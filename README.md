@@ -1,6 +1,6 @@
 # shelley-testnet
 
-Welcome to the dedicated community support GitHub repo for the Cardano Shelley testnet program. This is the place to log any issues or bugs that you encounter as you set up and test the self node, set up networking or stake pools. Please ensure that you are logged into GitHub before you log an issue, so that we can interact with you. 
+Welcome to the dedicated community support GitHub repo for the Cardano Shelley testnet program. This is the place to log any issues or bugs that you encounter as you set up and test the self node and stake pools or when building the network. Please ensure that you are logged into GitHub before you log an issue, so that we can interact with you. 
 
 We will assess all incoming issues in this central location and escalate them appropriately to our development teams for prompt resolution. We plan to provide support on weekdays and we work in different time zones, but 24hr support is not available.
 
