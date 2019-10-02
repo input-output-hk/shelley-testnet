@@ -10,4 +10,4 @@ We encourage you to share your ideas and suggestions in this central location so
 
 The How-to instructions updated documentation etc. is located on the [Shelley testnet wiki](https://github.com/input-output-hk/shelley-testnet/wiki)
 
-[![How to install](https://github.com/input-output-hk/shelley-testnet/wiki)](https://www.youtube.com/playlist?list=PLnPTB0CuBOBzHmIMplX6BT6F3tzKOSFG5 "Shelley Testnet Wiki")
+[![How to install](http://img.youtube.com/vi/dhri33gWdgU/0.jpg)](https://github.com/input-output-hk/shelley-testnet/wiki "Shelley Testnet self node")
