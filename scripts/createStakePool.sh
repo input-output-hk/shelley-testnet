@@ -7,12 +7,15 @@
 #  deployment, and is solely used for learning how the node and blockchain
 #  works, and how to interact with everything.
 #
+#  It also asumes that `jcli` is in the same folder with the script.
+#
 # Scenario:
 #   Configure 1 stake pool having as owner the provided account address (secret key)
 #
+#  Tutorials can be found here: https://github.com/input-output-hk/shelley-testnet/wiki
 
 ### CONFIGURATION
-CLI="jcli"
+CLI="./jcli"
 COLORS=1
 ADDRTYPE="--testing"
 
@@ -45,28 +48,28 @@ echo "FEE_CERTIFICATE: ${FEE_CERTIFICATE}"
 echo "=================================================="
 
 echo " ##1. Create VRF keys"
-POOL_VRF_SK=$(jcli key generate --type=Curve25519_2HashDH)
-POOL_VRF_PK=$(echo ${POOL_VRF_SK} | jcli key to-public)
+POOL_VRF_SK=$($CLI key generate --type=Curve25519_2HashDH)
+POOL_VRF_PK=$(echo ${POOL_VRF_SK} | $CLI key to-public)
 
 echo POOL_VRF_SK: ${POOL_VRF_SK}
 echo POOL_VRF_PK: ${POOL_VRF_PK}
 
 echo " ##2. Create KES keys"
-POOL_KES_SK=$(jcli key generate --type=SumEd25519_12)
-POOL_KES_PK=$(echo ${POOL_KES_SK} | jcli key to-public)
+POOL_KES_SK=$($CLI key generate --type=SumEd25519_12)
+POOL_KES_PK=$(echo ${POOL_KES_SK} | $CLI key to-public)
 
 echo POOL_KES_SK: ${POOL_KES_SK}
 echo POOL_KES_PK: ${POOL_KES_PK}
 
 echo " ##3. Create the Stake Pool certificate using above VRF and KEY public keys"
-jcli certificate new stake-pool-registration --kes-key ${POOL_KES_PK} --vrf-key ${POOL_VRF_PK} --owner ${ACCOUNT_PK} --serial 1010101010 --start-validity 0 --management-threshold 1 >stake_pool.cert
+$CLI certificate new stake-pool-registration --kes-key ${POOL_KES_PK} --vrf-key ${POOL_VRF_PK} --owner ${ACCOUNT_PK} --serial 1010101010 --start-validity 0 --management-threshold 1 >stake_pool.cert
 
 cat stake_pool.cert
 
 echo " ##4. Sign the Stake Pool certificate with the Stake Pool Owner private key"
 echo ${ACCOUNT_SK} >stake_key.sk
 
-cat stake_pool.cert | jcli certificate sign stake_key.sk >stake_pool.signcert
+cat stake_pool.cert | $CLI certificate sign stake_key.sk >stake_pool.signcert
 
 cat stake_pool.signcert
 
@@ -74,4 +77,4 @@ echo " ##5. Send the signed Stake Pool certificate to the blockchain"
 ./send-certificate.sh stake_pool.signcert ${REST_PORT} ${ACCOUNT_SK}
 
 echo " ##6. Retrieve your stake pool id (NodeId)"
-cat stake_pool.cert | jcli certificate get-stake-pool-id | tee stake_pool.id
+cat stake_pool.cert | $CLI certificate get-stake-pool-id | tee stake_pool.id

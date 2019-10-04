@@ -6,16 +6,20 @@
 #  only, it should *NOT* be used at scale or for any sort of serious
 #  deployment, and is solely used for learning how the node and blockchain
 #  works, and how to interact with everything.
+#
+#  It also asumes that `jcli` is in the same folder with the script.
+#
+#  Tutorials can be found here: https://github.com/input-output-hk/shelley-testnet/wiki
 
 ### CONFIGURATION
-CLI="jcli"
+CLI="./jcli"
 COLORS=1
 ADDRTYPE="--testing"
 SLOT_DURATION=2
 TIMEOUT_NO_OF_BLOCKS=200
 
 getTip() {
-  echo $(jcli rest v0 tip get -h "${REST_URL}")
+  echo $($CLI rest v0 tip get -h "${REST_URL}")
 }
 
 waitNewBlockCreated() {
