@@ -7,22 +7,25 @@
 #  deployment, and is solely used for learning how the node and blockchain
 #  works, and how to interact with everything.
 #
+#  It also asumes that `jcli` is in the same folder with the script.
 #  The script works only for Account addresses type.
+#
+#  Tutorials can be found here: https://github.com/input-output-hk/shelley-testnet/wiki
 
 ### CONFIGURATION
-CLI="jcli"
+CLI="./jcli"
 COLORS=1
 ADDRTYPE="--testing"
 SLOT_DURATION=2
 TIMEOUT_NO_OF_BLOCKS=200
 
 getTip() {
-  echo $(jcli rest v0 tip get -h "${REST_URL}")
+  echo $($CLI rest v0 tip get -h "${REST_URL}")
 }
 
 waitNewBlockCreated() {
   COUNTER=${TIMEOUT_NO_OF_BLOCKS}
-  echo "  ##Waiting for new block to be created (timeout = $COUNTER blocks = $((${COUNTER}*${SLOT_DURATION}))s)"
+  echo "  ##Waiting for new block to be created (timeout = $COUNTER blocks = $((${COUNTER} * ${SLOT_DURATION}))s)"
   initialTip=$(getTip)
   actualTip=$(getTip)
 
@@ -40,24 +43,24 @@ waitNewBlockCreated() {
 
 ### COLORS
 if [ ${COLORS} -eq 1 ]; then
-    GREEN=`printf "\033[0;32m"`
-    RED=`printf "\033[0;31m"`
-    BLUE=`printf "\033[0;33m"`
-    WHITE=`printf "\033[0m"`
+  GREEN=$(printf "\033[0;32m")
+  RED=$(printf "\033[0;31m")
+  BLUE=$(printf "\033[0;33m")
+  WHITE=$(printf "\033[0m")
 else
-    GREEN=""
-    RED=""
-    BLUE=""
-    WHITE=""
+  GREEN=""
+  RED=""
+  BLUE=""
+  WHITE=""
 fi
 
 if [ $# -ne 4 ]; then
-    echo "usage: $0 <ADDRESS> <AMOUNT> <REST-LISTEN-PORT> <SOURCE-SK>"
-    echo "    <ADDRESS>     Address where to send the funds"
-    echo "    <AMOUNT>      Amount to be sent (in lovelace) - tx fees will be paid by the source address"
-    echo "    <REST-LISTEN-PORT>   The REST Listen Port set in node-config.yaml file (EX: 3101)"
-    echo "    <SOURCE-SK>   The Secret key of the Source address"
-    exit 1
+  echo "usage: $0 <ADDRESS> <AMOUNT> <REST-LISTEN-PORT> <SOURCE-SK>"
+  echo "    <ADDRESS>     Address where to send the funds"
+  echo "    <AMOUNT>      Amount to be sent (in lovelace) - tx fees will be paid by the source address"
+  echo "    <REST-LISTEN-PORT>   The REST Listen Port set in node-config.yaml file (EX: 3101)"
+  echo "    <SOURCE-SK>   The Secret key of the Source address"
+  exit 1
 fi
 
 DESTINATION_ADDRESS="$1"
@@ -84,8 +87,8 @@ STAGING_FILE="staging.$$.transaction"
 
 #CLI transaction
 if [ -f "${STAGING_FILE}" ]; then
-    echo "error: staging already exist. restart"
-    exit 2
+  echo "error: staging already exist. restart"
+  exit 2
 fi
 
 set -e
@@ -97,11 +100,11 @@ echo "## Sending ${RED}${DESTINATION_AMOUNT}${WHITE} to ${BLUE}${DESTINATION_ADD
 $CLI address info "${DESTINATION_ADDRESS}"
 
 # TODO we should do this in one call to increase the atomicity, but otherwise
-SOURCE_COUNTER=$( $CLI rest v0 account get "${SOURCE_ADDR}" -h "${REST_URL}" | grep '^counter:' | sed -e 's/counter: //' )
+SOURCE_COUNTER=$($CLI rest v0 account get "${SOURCE_ADDR}" -h "${REST_URL}" | grep '^counter:' | sed -e 's/counter: //')
 
 # the source account is going to pay for the fee ... so calculate how much
 # FEE_COEFFICIENT should be multiplied witht the no of (INPUTS + OUTPUTS) - we use only 1 Source and 1 Destination
-ACCOUNT_AMOUNT=$((${DESTINATION_AMOUNT} + ${FEE_CONSTANT} + $((2*${FEE_COEFFICIENT}))))
+ACCOUNT_AMOUNT=$((${DESTINATION_AMOUNT} + ${FEE_CONSTANT} + $((2 * ${FEE_COEFFICIENT}))))
 
 # Create the transaction
 # FROM: ACCOUNT for AMOUNT+FEES
@@ -125,12 +128,12 @@ echo " ##5. Create the witness"
 WITNESS_SECRET_FILE="witness.secret.$$"
 WITNESS_OUTPUT_FILE="witness.out.$$"
 
-printf "${SOURCE_SK}" > ${WITNESS_SECRET_FILE}
+printf "${SOURCE_SK}" >${WITNESS_SECRET_FILE}
 
 $CLI transaction make-witness ${TRANSACTION_ID} \
-    --genesis-block-hash ${BLOCK0_HASH} \
-    --type "account" --account-spending-counter "${SOURCE_COUNTER}" \
-    ${WITNESS_OUTPUT_FILE} ${WITNESS_SECRET_FILE}
+  --genesis-block-hash ${BLOCK0_HASH} \
+  --type "account" --account-spending-counter "${SOURCE_COUNTER}" \
+  ${WITNESS_OUTPUT_FILE} ${WITNESS_SECRET_FILE}
 
 echo " ##6. Add the witness to the transaction"
 $CLI transaction add-witness ${WITNESS_OUTPUT_FILE} --staging "${STAGING_FILE}"
