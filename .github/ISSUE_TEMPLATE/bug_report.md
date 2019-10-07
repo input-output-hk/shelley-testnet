@@ -15,7 +15,8 @@ A clear and concise description of the bug.
 
 
 ** Prerequisites information
-
+1. `jcli --full-version` output;
+1. `jormungandr --full-version` output;
 1. What is your Operating system?
 1. What version of the jormungandr node are you using?
 1. Did you use jormungandr installer (snap, chocolatey, brew, etc.)?
