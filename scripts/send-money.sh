@@ -25,7 +25,7 @@ getTip() {
 
 waitNewBlockCreated() {
   COUNTER=${TIMEOUT_NO_OF_BLOCKS}
-  echo "  ##Waiting for new block to be created (timeout = $COUNTER blocks = $((${COUNTER} * ${SLOT_DURATION}))s)"
+  echo "  ##Waiting for new block to be created (timeout = ${COUNTER} blocks = $((${COUNTER}*${SLOT_DURATION}))s)"
   initialTip=$(getTip)
   actualTip=$(getTip)
 
@@ -34,7 +34,7 @@ waitNewBlockCreated() {
     actualTip=$(getTip)
     COUNTER=$((COUNTER - 1))
     if [ ${COUNTER} -lt 2 ]; then
-      echo "  ##ERROR: Waited $(($COUNTER * $SLOT_DURATION))s secs ($COUNTER*$SLOT_DURATION) and no new block created"
+      echo "  !!!!!! ERROR: Waited $((${TIMEOUT_NO_OF_BLOCKS} * ${SLOT_DURATION}))s secs (${TIMEOUT_NO_OF_BLOCKS}*${SLOT_DURATION}) and no new block created"
       exit 1
     fi
   done

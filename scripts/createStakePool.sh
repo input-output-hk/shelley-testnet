@@ -67,7 +67,7 @@ $CLI certificate new stake-pool-registration --kes-key ${POOL_KES_PK} --vrf-key 
 cat stake_pool.cert
 
 echo " ##4. Sign the Stake Pool certificate with the Stake Pool Owner private key"
-echo ${ACCOUNT_SK} >stake_key.sk
+echo ${ACCOUNT_SK} > stake_key.sk
 
 cat stake_pool.cert | $CLI certificate sign stake_key.sk >stake_pool.signcert
 
@@ -78,3 +78,16 @@ echo " ##5. Send the signed Stake Pool certificate to the blockchain"
 
 echo " ##6. Retrieve your stake pool id (NodeId)"
 cat stake_pool.cert | $CLI certificate get-stake-pool-id | tee stake_pool.id
+
+NODE_ID=$(cat stake_pool.id)
+
+echo "The Node ID is: ${NODE_ID}"
+
+echo " ##7. Creating the node_secret.yaml file"
+#define the template.
+cat > node_secret.yaml << EOF
+genesis:
+  sig_key: ${POOL_KES_SK}
+  vrf_key: ${POOL_VRF_SK}
+  node_id: ${NODE_ID}
+EOF
