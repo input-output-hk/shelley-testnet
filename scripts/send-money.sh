@@ -3,12 +3,12 @@
 # Disclaimer:
 #
 #  The following use of shell script is for demonstration and understanding
-#  only, it should *NOT* be used at scale or for any sort of serious
+#  only. It should *NOT* be used at scale or for any sort of serious
 #  deployment, and is solely used for learning how the node and blockchain
 #  works, and how to interact with everything.
 #
 #  It also asumes that `jcli` is in the same folder with the script.
-#  The script works only for Account addresses type.
+#  The script works only for Account address types.
 #
 #  Tutorials can be found here: https://github.com/input-output-hk/shelley-testnet/wiki
 
@@ -25,16 +25,19 @@ getTip() {
 
 waitNewBlockCreated() {
   COUNTER=${TIMEOUT_NO_OF_BLOCKS}
-  echo "  ##Waiting for new block to be created (timeout = ${COUNTER} blocks = $((${COUNTER}*${SLOT_DURATION}))s)"
+  echo "  ##Waiting for new block to be created (timeout = ${COUNTER} blocks = $((${COUNTER}*${SLOT_DURATION})) secs)."
   initialTip=$(getTip)
   actualTip=$(getTip)
 
   while [ "${actualTip}" = "${initialTip}" ]; do
+    echo -ne '  ##Waiting...\r'
     sleep ${SLOT_DURATION}
+    echo -ne '              \r'
     actualTip=$(getTip)
     COUNTER=$((COUNTER - 1))
     if [ ${COUNTER} -lt 2 ]; then
-      echo "  !!!!!! ERROR: Waited $((${TIMEOUT_NO_OF_BLOCKS} * ${SLOT_DURATION}))s secs (${TIMEOUT_NO_OF_BLOCKS}*${SLOT_DURATION}) and no new block created"
+      echo "  !!!!!! ERROR: Waited $((${TIMEOUT_NO_OF_BLOCKS} * ${SLOT_DURATION})) secs (${TIMEOUT_NO_OF_BLOCKS} blocks * ${SLOT_DURATION} seconds slot duration) and no new block was created."
+      echo "  The transaction may still be included when a block is finally created."
       exit 1
     fi
   done
@@ -141,16 +144,16 @@ $CLI transaction add-witness ${WITNESS_OUTPUT_FILE} --staging "${STAGING_FILE}"
 echo " ##7. Show the transaction info"
 $CLI transaction info --fee-constant ${FEE_CONSTANT} --fee-coefficient ${FEE_COEFFICIENT} --staging "${STAGING_FILE}"
 
-echo " ##7. Finalize the transaction and send it"
+echo " ##8. Finalize the transaction and send it"
 $CLI transaction seal --staging "${STAGING_FILE}"
 $CLI transaction to-message --staging "${STAGING_FILE}" | $CLI rest v0 message post -h "${REST_URL}"
 
-echo " ##8. Remove the temporary files"
+echo " ##9. Remove the temporary files"
 rm ${STAGING_FILE} ${WITNESS_SECRET_FILE} ${WITNESS_OUTPUT_FILE}
 
 waitNewBlockCreated
 
-echo " ##9. Check the account's balance"
+echo " ##10. Check the account's balance"
 $CLI rest v0 account get ${DESTINATION_ADDRESS} -h ${REST_URL}
 
 exit 0
