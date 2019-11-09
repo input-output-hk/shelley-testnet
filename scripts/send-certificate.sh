@@ -63,7 +63,8 @@ fi
 
 CERTIFICATE_PATH="$1"
 REST_PORT="$2"
-ACCOUNT_SK="$3"
+ACCOUNT_SK_PATH="$3"
+ACCOUNT_SK=$(cat ${ACCOUNT_SK_PATH})
 
 REST_URL="http://127.0.0.1:${REST_PORT}/api"
 
@@ -143,6 +144,7 @@ $CLI transaction info --fee-constant ${FEE_CONSTANT} --fee-coefficient ${FEE_COE
 
 echo " ##8. Finalize the transaction and send it to the blockchain"
 $CLI transaction seal --staging "${STAGING_FILE}"
+$CLI transaction auth -k "${ACCOUNT_SK_PATH}" --staging "${STAGING_FILE}"
 $CLI transaction to-message --staging "${STAGING_FILE}" | $CLI rest v0 message post -h "${REST_URL}"
 
 echo " ##9. Remove the temporary files"

@@ -95,17 +95,12 @@ echo " ##1. Create the delegation certificate for the Account address"
 
 ACCOUNT_SK_FILE="account.prv"
 CERTIFICATE_FILE="account_delegation_certificate"
-SIGNED_CERTIFICATE_FILE="account_delegation_certificate.signed"
 echo ${ACCOUNT_SK} > ${ACCOUNT_SK_FILE}
 
 $CLI certificate new stake-delegation \
     ${STAKE_POOL_ID} \
     ${ACCOUNT_PK} \
     ${CERTIFICATE_FILE}
-$CLI certificate sign \
-    ${ACCOUNT_SK_FILE} \
-    ${CERTIFICATE_FILE} \
-    ${SIGNED_CERTIFICATE_FILE}
 
 ACCOUNT_COUNTER=$( $CLI rest v0 account get "${ACCOUNT_ADDR}" -h "${REST_URL}" | grep '^counter:' | sed -e 's/counter: //' )
 ACCOUNT_AMOUNT=$((${FEE_CONSTANT} + ${FEE_COEFFICIENT} + ${FEE_CERTIFICATE}))
@@ -117,7 +112,7 @@ echo " ##3. Add input account to the transaction"
 $CLI transaction add-account "${ACCOUNT_ADDR}" "${ACCOUNT_AMOUNT}" --staging "${STAGING_FILE}"
 
 echo " ##4. Add the certificate to the transaction"
-cat ${SIGNED_CERTIFICATE_FILE} | xargs $CLI transaction add-certificate --staging ${STAGING_FILE}
+cat ${CERTIFICATE_FILE} | xargs $CLI transaction add-certificate --staging ${STAGING_FILE}
 
 echo " ##5. Finalize the transaction"
 $CLI transaction finalize --staging ${STAGING_FILE}
@@ -143,6 +138,7 @@ $CLI transaction info --fee-constant ${FEE_CONSTANT} --fee-coefficient ${FEE_COE
 
 echo " ##9. Finalize the transaction and send it to the blockchain"
 $CLI transaction seal --staging "${STAGING_FILE}"
+$CLI transaction auth -k "${ACCOUNT_SK_FILE}" --staging "${STAGING_FILE}"
 $CLI transaction to-message --staging "${STAGING_FILE}" | $CLI rest v0 message post -h "${REST_URL}"
 
 waitNewBlockCreated
@@ -150,6 +146,6 @@ waitNewBlockCreated
 echo " ##10. Check the account's delegation status"
 $CLI rest v0 account get ${ACCOUNT_ADDR} -h ${REST_URL}
 
-rm ${STAGING_FILE} ${ACCOUNT_SK_FILE} ${CERTIFICATE_FILE} ${SIGNED_CERTIFICATE_FILE} ${WITNESS_SECRET_FILE} ${WITNESS_OUTPUT_FILE}
+rm ${STAGING_FILE} ${ACCOUNT_SK_FILE} ${CERTIFICATE_FILE} ${WITNESS_SECRET_FILE} ${WITNESS_OUTPUT_FILE}
 
 exit 0
