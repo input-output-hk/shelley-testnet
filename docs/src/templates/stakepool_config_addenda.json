@@ -1,0 +1,16 @@
+{
+    "log": [
+        {
+            "format": "plain",
+            "level": "info",
+            "output": "stderr"
+        }
+    ],
+    "storage": "./storage/",
+    "p2p": {
+        "listen_address": "/ip4/0.0.0.0/tcp/3000",
+        "public_address": "/ip4/187.133.2.28/tcp/3000",
+        "topics_of_interest": {
+            "blocks": "high",
+            "messages": "high"
+        },

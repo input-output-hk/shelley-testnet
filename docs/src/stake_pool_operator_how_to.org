@@ -1,0 +1,964 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+#+title: stake pool operator how to
+#+date: <2019-12-09 lun>
+#+author: agarciafdz
+#+email: agarciafdz@agarciafd-lg
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.1 (Org mode 9.2.6)
+#+EXPORT_FILE_NAME: ../stake_pool_operator_how_to.md
+#+PROPERTY: header-args :eval never-export
+#+PROPERTY: header-args :cache yes
+
+* 0 How to use this org file                                       :noexport:
+  This org file is the single source for multiple documents:
+  - It generates the README.md which should be the one that the users read
+  - It generates doitlive scripts used to record the video tutorials
+  - And generates the image of the stake pool_journey from plantuml
+
+** replace strings
+   Since I don't seem to understand how var and tangle work I need to replace this stings
+
+   #+begin_src sh
+   sed -i 's/v0.8.0-rc9+1/v0.8.0-rc9+1/g' ./stake_pool_operator_how_to.org
+   sed -i 's/nightly/nightly/g' ./stake_pool_operator_how_to.org
+   #+end_src
+
+
+
+#+RESULTS:
+
+** clean directory
+   #+begin_src sh :exports none :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   rm -rf *
+   #+end_src
+
+   #+RESULTS:
+
+** How to export to markdown and html
+   To export this file as markdown do:
+
+   #+begin_example
+   C-c C-e g g
+   #+end_example
+
+   After that if you want to have a nice html view do this:
+
+   #+begin_src sh
+   pandoc -s ../stake_pool_operator_how_to.md -o ../stake_pool_operator_how_to.html --css=./src/pandoc/pandoc.css
+   pandoc --highlight-style=tango -s ../stake_pool_operator_how_to.md -o ../stake_pool_operator_how_to.docx --css=./src/pandoc/pandoc.css
+   pandoc --highlight-style=tango -s ../stake_pool_operator_how_to.md -o ../stake_pool_operator_how_to.pdf
+   #+end_src
+
+   #+RESULTS[f269f3b5b1cf06fe5235876b73261dc1fdf4ec8a]:
+
+** Avoid evaluating all source code blocks on export
+   When exporting this file it might ask: =Do you want to evaluate code block on your system?= like 20 times.
+   in order to avoid this put:
+   #+begin_example
+   #+PROPERTY: header-args :eval never-export
+   #+end_example
+   on top of this file and pres =C-c C-C= in order to evaluate it.
+   However when you want to go back to evaluation you need to delete the line.
+
+** Generate the doitlive scripts
+
+   When you tangle =C-c C-v t= it will generate the files in =./doitlive/=
+
+   #+begin_src sh :results output code
+   ls -l ./doitlive/
+   #+end_src
+
+   #+RESULTS[7553d191a3592e7f5a72a87d41a60d6810cd06e1]:
+   #+begin_src sh
+   total 32
+   -rw-rw-r-- 1 agarciafdz agarciafdz 1480 dic 11 19:49 win01ch2.sh
+   -rw-rw-r-- 1 agarciafdz agarciafdz  120 dic 11 19:49 win01ch4.sh
+   -rw-rw-r-- 1 agarciafdz agarciafdz  190 dic 11 19:49 win02ch02.sh
+   -rw-rw-r-- 1 agarciafdz agarciafdz  869 dic 11 19:49 win02ch03.sh
+   -rw-rw-r-- 1 agarciafdz agarciafdz  843 dic 11 19:49 win02ch04.sh
+   -rw-rw-r-- 1 agarciafdz agarciafdz 1053 dic 11 19:49 win02ch05.sh
+   -rw-rw-r-- 1 agarciafdz agarciafdz  526 dic 11 19:49 win02ch06.sh
+   -rw-rw-r-- 1 agarciafdz agarciafdz  373 dic 11 19:49 win02ch07.sh
+   #+end_src
+
+   Then you need to generate the whole script with:
+   #+begin_src sh
+   cat ./doitlive/win01* > /tmp/win01.sh
+   cat ./doitlive/win02* > /tmp/win02.sh
+   #+end_src
+
+   #+RESULTS[83a09402e278901929d9bbb6a83d96abe4b900be]:
+
+   And then to execute it doitlive
+   #+begin_src sh :exports code
+   doitlive play /tmp/win01.sh
+   #+end_src
+   and in a second window the other file.
+
+** Generate a compact tutorial, just commands
+
+   first let's create a little introduction
+   #+begin_src md :tangle ./doitlive/1_intro.md
+   # 1. Stake pool operator How-to COMPACT edition
+   The goal of this edition is to just present the commands that are typed on the terminal
+   in the video series: [Stake pool operator Journey](https://www.youtube.com/playlist?list=PLnPTB0CuBOBxWkg6WuocFSvu-9VIzgg7I).
+   If you want to view the whole context, please read the [complete how-to guide](stake_pool_operator_how_to.md).
+
+   ```sh
+
+   #+end_src
+
+   #+begin_src sh
+   cat ./doitlive/win* | sed \
+   -e '/^open/d' \
+   -e '/^clear/d' \
+   -e '/^#doitlive/d' \
+   -e 's/elviejo79/your_user_name/g' \
+   -e '/^#.*/a ```sh' \
+   -e '/^#.*/i ```' | \
+   cat ./doitlive/1_intro.md - > ../stake_pool_operator_how_to_compact.md
+   #+end_src
+
+   #+RESULTS:
+
+
+
+* Stake pool operator How-To
+  :PROPERTIES:
+  :CUSTOM_ID: stake-pool-operator-journey
+  :END:
+
+  A Stake pool operator plays a fundamental role in the health and decentralization of the Cardano Blockchain. In the following sections we are going to see *How to become a stake pool operator*.
+
+  Keep in mind the following diagram as we go working with this sections.
+
+  [[./images/stakepool_operator_journey.svg]]
+
+* 1. Understand stake pool minimal system requirements
+  :PROPERTIES:
+  :CUSTOM_ID: understand-stake-pool-minimal-system-requirements
+  :END:
+
+There are hardware, operating system and software requirements to set up
+a stake pool.
+
+** 1.1 Hardware
+   :PROPERTIES:
+   :CUSTOM_ID: hardware
+   :END:
+
+-  4 GB of RAM
+-  A Good network connection and about 1 GB of * bandwidth / hour
+-  A public ip4 address
+-  Processor speed is not a significant factor
+
+** 1.2 Operating System
+   :PROPERTIES:
+   :CUSTOM_ID: operating-system
+   :END:
+
+Supported stake pool operating systems
+
+We support Linux, BSD, Mac, and Windows
+platforms. The following versions are required:
+
+-  Linux (2.6.18 or later)
+-  BSD (Net BSD 8.x and Free BSD 12.x)
+-  mac OS (10.7 Lion or later)
+-  Windows 10
+
+** 1.3 Software (Jormungandr)
+   :PROPERTIES:
+   :CUSTOM_ID: software-jormungandr
+   :END:
+Latest version of Jormungandr and JCLI.  Just follow along in the next section. Or check the [[https://github.com/input-output-hk/jormungandr/releases][repository]].
+
+* 2. Start Jormungandr node
+  :PROPERTIES:
+  :CUSTOM_ID: start-jormungandr-node
+  :END:
+
+   #+begin_src sh :exports none :tangle ./doitlive/win01ch2.sh
+   #doitlive alias: open="google-chrome"
+   #doitlive prompt: $
+   #doitlive commentecho: true
+   open file:///home/agarciafdz/video_tutorial/stakepool_journey/stakepool_operator_journey.svg
+   clear
+   # 2. Start Jormungandr node
+   #+end_src
+
+In the following steps we will downloading, configure and start the Jormungandr node.
+Note: If you have any issues while installing Jormungandr and JCLI, please refer to our support portal [[https://iohk.zendesk.com/hc/en-us/articles/360036898153][macOS/Linux instructions]].
+
+** 2.1 Find the latest version of the testnet
+   You can find the configuration parameters [[https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-finished/download/1/index.html][here]]
+   Select the one for Incentivized testnet and download the appropriate version of Jormungandr from GitHub.
+
+#+begin_src sh :exports none :tangle ./doitlive/win01ch2.sh :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+open https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-finished/download/1/index.html
+#+end_src
+
+   #+begin_src sh :exports none :tangle ./doitlive/win01ch2.sh :dir ~/
+   open https://github.com/input-output-hk/jormungandr/releases/v0.8.0-rc9+1/
+   #+end_src
+
+** 2.2 Download Jormungandr from GitHub
+   :PROPERTIES:
+   :CUSTOM_ID: download-jormungandr-from-github
+   :END:
+   On [[https://github.com/input-output-hk/jormungandr/releases/][github.com/input-output-hk/jormungandr/]] you will click =Releases= and from there download the file appropriate for your  operating system.
+
+-  For Linux download the file ending in
+   =...-x86_64-unknown-linux-gnu.tar.gz=
+-  For MacOS download the file ending in
+   =...-x86_64-apple-darwin.tar.gz=
+
+#+begin_src sh :exports none :tangle ./doitlive/win01ch2.sh :session jor-server  :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+curl -sLOJ https://github.com/input-output-hk/jormungandr/releases/download/v0.8.0-rc9+1/jormungandr-v0.8.0-rc9+1-x86_64-unknown-linux-gnu.tar.gz
+#+end_src
+
+#+RESULTS:
+
+** 2.3 Extract the files (in your Terminal or Finder)
+   :PROPERTIES:
+   :CUSTOM_ID: extract-the-files-either-use-terminal-or-finder
+   :END:
+
+-  Using the command line: in terminal, navigate to the directory where
+   you downloaded the archive and execute
+#+Name: extracted_files
+#+begin_src sh :exports code :tangle ./doitlive/win01ch2.sh :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+tar -xzvf jormungandr-v0.8.0-rc9+1-x86_64-unknown-linux-gnu.tar.gz
+#+end_src
+
+#+RESULTS: extracted_files
+#+begin_src sh
+ jcli
+ jormungandr
+#+end_src
+
+OR
+
+- In Finder: navigate to the folder where you saved the archive (the
+  default is the Downloads folder), Double click the archive to extract
+  it. This will create a folder with the same name as the archive and
+  the folder will have two files in it.
+
+** 2.4 Verify the files were installed correctly
+   :PROPERTIES:
+   :CUSTOM_ID: verify-the-files-were-installed-correctly
+   :END:
+
+In Terminal just type
+
+#+NAME: jcli-version
+#+begin_src sh :exports both :tangle ./doitlive/win01ch2.sh :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+    ./jcli -V
+#+end_src
+
+and it will return something like
+
+#+RESULTS: jcli-version
+#+begin_src sh
+$ jcli 0.8.0-rc7
+#+end_src
+
+Victory! JCLI is available to us.
+
+** 2.5 Configure your node
+   :PROPERTIES:
+   :CUSTOM_ID: configure-your-node
+   :END:
+
+*** 2.5.1 Download the config.yaml file
+    :PROPERTIES:
+    :CUSTOM_ID: download-the-config.yaml-file
+    :END:
+From the [[https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-finished/download/1/index.html][Jormungandr Configurations page]], save the config.yaml.
+This file is important because it has the list of trusted peers.
+The trusted peers are the nodes from which we are going to start downloading our own copy of the blockchain.
+
+#+name: doitlive-open-website-with-testnet-instructions
+#+begin_src sh  :tangle ./doitlive/win01ch2.sh :exports none :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+open https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-finished/download/1/index.html
+curl -sLOJ https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandrConfigs.nightly/latest/download/1/nightly-config.yaml
+#+end_src
+#+RESULTS:
+
+*** 2.5.2 Add stake pool configuration parameters
+Since this we are trying to configure a stake pool we need to add to the configuration file our public IP, listen address and the storage location.
+
+#+begin_src sh :exports none :tangle ./doitlive/win01ch2.sh :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   tail -n +14 ./nightly-config.yaml | cat ./templates/stakepool_config_addenda.json - > ./stakepool-config.yaml
+   open https://www.canyouseeme.org/
+#+end_src
+
+for example:
+
+#+begin_src sh :exports result :tangle no :results output code :session jor-server
+   cat ./templates/stakepool_config_addenda.json | sed 's/187.133.2.28/0.0.0.0/g'
+#+end_src
+
+#+RESULTS[3a1f6b32697f4a15a19c97e83eb3371a904e8e80]:
+#+begin_src sh
+{
+    "log": [
+        {
+            "format": "plain",
+            "level": "info",
+            "output": "stderr"
+        }
+    ],
+    "storage": "./storage/",
+    "p2p": {
+        "listen_address": "/ip4/0.0.0.0/tcp/3000",
+        "public_address": "/ip4/0.0.0.0/tcp/3000",
+        "topics_of_interest": {
+            "blocks": "high",
+            "messages": "high"
+        },
+#+end_src
+
+
+*** 2.5.3 Create the genesis-hash.txt file
+    :PROPERTIES:
+    :CUSTOM_ID: download-the-genesis-hash.txt-file
+    :END:
+    From the same  [[https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-finished/download/1/index.html][Jormungandr Configurations page]], you can copy the genesis hash and save it to a file called =genesis-hash.txt=
+
+#+name: doitlive-genesis-hash
+#+begin_src sh  :tangle ./doitlive/win01ch2.sh :exports none :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+curl -sLOJ https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandrConfigs.nightly/latest/download/2/genesis-hash.txt
+#+end_src
+
+Once you have created the genesis-hash, check it's contents to make sure it matches the one Jormungandr Configurations page.
+#+begin_src sh :exports both :tangle ./doitlive/win01ch2.sh :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+cat genesis-hash.txt
+#+end_src
+
+#+name: doitlive-genesis-hash-2
+#+begin_src sh  :tangle ./doitlive/win01ch2.sh :exports none :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+ls -lrt
+#+end_src
+
+** 2.6 Start the node
+   :PROPERTIES:
+   :CUSTOM_ID: start-the-node
+   :END:
+
+#+NAME: doitlive-open-jcli-terminal
+#+begin_src sh :exports none :tangle ./doitlive/win01ch2.sh :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+gnome-terminal --profile=client
+#+end_src
+
+Executing the command in the same location where all 3 files were saved.
+
+#+begin_src sh  :tangle ./doitlive/win01ch2.sh :exports code  :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+    ./jormungandr --genesis-block-hash $(cat genesis-hash.txt) --config ./stakepool-config.yaml
+#+end_src
+
+** 2.7 Check that the node is syncing
+   :PROPERTIES:
+   :CUSTOM_ID: check-that-the-node-syncing
+   :END:
+
+Execute the following command in your command-line interface to check if
+your node is syncing.
+
+#+Name: doitlive-get_block_count
+#+begin_src sh  :tangle ./doitlive/win02ch02.sh :results value drawer :exports none :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+#doitlive alias: open="google-chrome"
+#doitlive prompt: $
+#doitlive commentecho: true
+
+## 2.7 Check that the node is syncing
+
+#+end_src
+
+#+begin_src sh  :tangle ./doitlive/win02ch02.sh :results output :exports both :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+./jcli rest v0 node stats get --host "http://127.0.0.1:3100/api"
+#+end_src
+
+It will output something like this:
+
+#+RESULTS: get_block_count
+#+begin_src yaml
+---
+blockRecvCnt: 2
+lastBlockDate: "0.6056"
+lastBlockFees: 4
+lastBlockHash: 29f83b496e53073221d26cd5f09050d819069a699c30600f9afbf41170236b7a
+lastBlockHeight: "482"
+lastBlockSum: 10000000004
+lastBlockTime: "2019-12-04T15:57:20+00:00"
+lastBlockTx: 1
+state: Running
+txRecvCnt: 1
+uptime: 46
+version: jormungandr 0.8.0-rc7-ab32b2c
+#+end_src
+
+Your node is synced with the blockchain when it receives all the blocks
+that are created in the network in real-time. You can check
+that by following the below 2 rules:
+
+1. execute the =node stats= command from above multiple times and check
+   that the value of the lastBlockHash field is updated (with the actual
+   blockchain values, there should be a new block created every 2-5
+   minutes);
+2. compare the value of the lastBlockTime field (that is in UTC) with
+   the local time of the node. If the difference if more than 10
+   minutes, the node might not be =synced= even the node received blocks
+   in the past (blockRecvCnt > 0);
+
+* 3. Fund stake pool owner account in JCLI
+  :PROPERTIES:
+  :CUSTOM_ID: fund-stake-pool-owner-account-in-jcli
+  :END:
+
+   #+begin_src sh  :tangle ./doitlive/win02ch03.sh :exports none :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   #doitlive commentecho: true
+   open file:///home/agarciafdz/video_tutorial/stakepool_journey/stakepool_operator_journey.svg
+   clear
+
+   # 3. Fund stake pool owner account in JCLI
+   open https://github.com/input-output-hk/jormungandr-qa/
+   #+end_src
+
+In order to register a stake pool in the blockchain, you will need to
+create a stake pool certificate and send it to the blockchain. This will
+require you to have enough funds to pay for the transaction fee. Note:
+Step 3.2 is going to change a lot depending on the time you read this article.
+
+** 3.1 Create an account address using the script
+   :PROPERTIES:
+   :CUSTOM_ID: create-an-account-address-using-the-script
+   :END:
+   Run the following command to download the =createAddress.sh= script into that location
+
+
+#+begin_src sh  :tangle ./doitlive/win02ch03.sh :exports both :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+    curl -sLOJ https://raw.githubusercontent.com/input-output-hk/jormungandr-qa/master/scripts/createAddress.sh
+#+end_src
+
+#+RESULTS:
+
+   Make the script executable
+
+#+begin_src sh  :tangle ./doitlive/win02ch03.sh :exports both :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+    chmod +x createAddress.sh
+#+end_src
+
+#+RESULTS:
+
+
+-  Create a new account address.
+#+Name: create_account
+#+begin_src sh  :tangle ./doitlive/win02ch03.sh :results value output :exports both :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+    ./createAddress.sh account | tee stakepool_owner_account.txt
+#+end_src
+
+The result is similar to the following, *IT IS EXTREMELY IMPORTANT THAT
+YOU SAVE YOUR KEYS FOR FUTURE USE*
+
+#+RESULTS: create_account
+#+begin_src sh
+PRIVATE_KEY_SK: ed25519e_sk1lq2zcyms6exxan0xx2gufjt2hdgsxmytgv5fl7nd4agzc89e6eympdwrhc2e59zkhqrpp3gnc4cfp5kf9xqufr9kn7ddl5uvtdsr84q5rg3ge
+PUBLIC_KEY_PK:  ed25519_pk1nm8frtnm8r8yf7tn920akuhtw5s2xaug4mepk84kn3l9znansh0qn206ej
+ADDRESS:        addr1sk0vaydw0vuvu38ewv4flkmjad6jpgmh3zh0yxc7k6w8u520kwzaus7z93h
+#+end_src
+
+#+NAME: account-address
+#+begin_src sh  :tangle ./doitlive/win02ch03.sh :exports none :results value :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+
+export PRIVATE_KEY_SK=$(cat stakepool_owner_account.txt | grep -Po "(ed25519e_[0-9a-z]+?)$")
+export PUBLIC_KEY_PK=$(cat stakepool_owner_account.txt | grep -Po "(ed25519_[0-9a-z]+?)$")
+export ACCOUNT_ADDRESS=$(cat stakepool_owner_account.txt | grep -Po "(addr[0-9a-z]+?)$")
+#+end_src
+
+** 3.2 Send funds to your stake pool account
+   :PROPERTIES:
+   :CUSTOM_ID: send-funds-to-your-stake-pool-account
+   :END:
+
+Depending on the time you are reading this How-to you will have three options to finance your account.
+
+1. Using the Faucet in the nightly testnet with fake tokens
+2. Using the Cardano-Wallet with command line.
+3. Using Daedalus directly
+
+
+*** 3.2.1 For The Nightly Testnet
+Funding your account for the Nightly testnet is pretty simple, since we are not using real ADAs you can use a Faucet, that disperses funds for free.
+
+#+name: faucet_results
+#+begin_src sh  :tangle ./doitlive/win02ch03.sh :exports both :results output code :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+curl -X POST https://faucet.nightly.jormungandr-testnet.iohkdev.io/send-money/$ACCOUNT_ADDRESS
+#+end_src
+
+#+RESULTS: faucet_results
+#+begin_src js
+{"success":true,"amount":10000000000,"fee":4,"txid":"cc8953e38d2df5159158c80fd8fdc869a2724a99adff279fb51d413a76fd964e"}
+#+end_src
+
+*** 3.2.2 For the Incentivized Testnet using Cardano-Wallet CLI
+    The autorative source for founding in the Incentivized testnet is this article:
+    [[https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry/wiki/How-to-Register-Your-Stake-Pool#step-3-fund-your-account][How to Register Your Stake Pool]] follow the tutorial along
+    and come back, once you have sent yourself some funds.
+
+*** 3.2.3 For the Incentivized Testnet using Daedalus
+    With version of Daedalus for the Incentivized testnet you will be able to finance your account directly. Simply sending funds to your =$ACCOUNT_ADDRESS=.
+
+
+** 3.3 Check balance in your stake pool account
+
+
+   #+begin_src sh  :tangle ./doitlive/win02ch03.sh :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   ./jcli rest v0 account get $ACCOUNT_ADDRESS -h http://127.0.0.1:3100/api
+   #+end_src
+
+   #+RESULTS:
+   #+begin_src yaml
+   ---
+   counter: 0
+   delegation:
+   pools: []
+   last_rewards:
+   epoch: 0
+   reward: 0
+   value: 10000000000
+   #+end_src
+
+* 4. Create a stake pool certificate in JCLI
+  :PROPERTIES:
+  :CUSTOM_ID: create-a-stake-pool-certificate-in-jcli
+  :END:
+
+   #+begin_src sh  :tangle ./doitlive/win02ch04.sh :exports none :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   #doitlive commentecho: true
+   open file:///home/agarciafdz/video_tutorial/stakepool_journey/stakepool_operator_journey.svg
+   clear
+
+   # 4. Create a stake pool certificate in JCLI
+   open https://github.com/input-output-hk/jormungandr-qa/
+   #+end_src
+
+** 4.1 Download the createStakePool and send-certificate scripts
+   :PROPERTIES:
+   :CUSTOM_ID: create-a-stake-pool-using-a-script
+   :END:
+
+-  Download the =createStakePool.sh= script from the [[https://github.com/input-output-hk/jormungandr-qa/tree/master/scripts][repository]]
+   and save it to the directory where you stored the rest of the files
+   (jcli, Jormungandr, config.yaml, etc) You can download the script
+   using your browser or the following commands
+
+-  Open the terminal in the location where you have the rest of the
+   files (jcli, Jormungandr, config.yaml, etc) and run the below
+   commands to download the =createStakePool.sh= and
+   =send-certificate.sh= scripts into that location:
+
+#+begin_src sh  :tangle ./doitlive/win02ch04.sh :exports both :results value :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+curl -sLOJ https://raw.githubusercontent.com/input-output-hk/jormungandr-qa/master/scripts/createStakePool.sh
+curl -sLOJ https://raw.githubusercontent.com/input-output-hk/jormungandr-qa/master/scripts/send-certificate.sh
+#+end_src
+
+#+RESULTS:
+
+Check that the scripts were downloaded into the current location by executing =ls= command into the terminal
+
+-  Change the scripts permissions in order to be able to execute them
+
+#+begin_src sh  :tangle ./doitlive/win02ch04.sh :exports both :results value :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+    chmod +x createStakePool.sh
+    chmod +x send-certificate.sh
+#+end_src
+
+#+RESULTS:
+
+** 4.2 Check the parameters required by the script
+
+#+name: createStakePool_help
+#+begin_src sh  :tangle ./doitlive/win02ch04.sh :exports both :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+    ./createStakePool.sh --help
+#+end_src
+
+Output:
+
+#+RESULTS: createStakePool_help
+#+begin_src sh
+<TAX_VALUE> <TAX_RATIO> <TAX_LIMIT> <ACCOUNT_SK>
+The REST Listen Port set in node-config.yaml file (EX: 3101)
+The fixed cut the stake pool will take from the total reward
+The percentage of the remaining value that will be taken from the total
+A value that can be set to limit the pool's Tax.
+The Secret key of the Source address
+#+end_src
+
+For a detailed explanation of the TAX_VALUE, TAX_RATIO and TAX_LIMIT parameters.
+check this [[https://input-output-hk.github.io/jormungandr/stake_pool/registering_stake_pool.html][article]]. Remember the quantities are in *Lovelaces* i.e. 1 ADA = 1,000,000 Lovelace.
+
+** 4.3 Execute the =createStakePool.sh= script
+In this example the Secret Key is:
+
+#+name: secret_key
+#+begin_src sh  :tangle ./doitlive/win02ch04.sh :exports result :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+echo $PRIVATE_KEY_SK
+#+end_src
+
+#+RESULTS: secret_key
+#+begin_src sh
+$ ed25519e_sk1lq2zcyms6exxan0xx2gufjt2hdgsxmytgv5fl7nd4agzc89e6eympdwrhc2e59zkhqrpp3gnc4cfp5kf9xqufr9kn7ddl5uvtdsr84q5rg3ge
+#+end_src
+
+So let's call the =createStakePool.sh= script with our secret key and save the output to the =createStakePool_output.txt= file
+
+#+name: createStakePool_output
+#+begin_src sh  :tangle ./doitlive/win02ch04.sh :exports both :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+    ./createStakePool.sh 3100 10000 1/10 1000000 $PRIVATE_KEY_SK | tee createStakePool_output.txt
+#+end_src
+
+That command will give the following output. Pay attention to your node-id and the =node_secret.yaml= file.
+#+RESULTS: createStakePool_output
+#+begin_src sh
++ + ./createStakePool.sh 3100 10000 1/10 1000000 ed25519e_sk1lq2zcyms6exxan0xx2gufjt2hdgsxmytgv5fl7nd4agzc89e6eympdwrhc2e59zkhqrpp3gnc4cfp5kf9xqufr9kn7ddl5uvtdsr84q5rg3ge
+tee createStakePool_output.txt
+================ Blockchain details =================
+REST_PORT:        3100
+ACCOUNT_SK:       ed25519e_sk1lq2zcyms6exxan0xx2gufjt2hdgsxmytgv5fl7nd4agzc89e6eympdwrhc2e59zkhqrpp3gnc4cfp5kf9xqufr9kn7ddl5uvtdsr84q5rg3ge
+BLOCK0_HASH:      c8a1b4b8cd3b6a6c39adba11f62c34230b37b388f5a8edfe8cd73e7b8f811f48
+FEE_CONSTANT:     2
+FEE_COEFFICIENT:  1
+FEE_CERTIFICATE:  4
+==================================================
+#1. Create VRF keys
+POOL_VRF_SK: vrf_sk15kyr7422z69urytz0j5yx8e0shdsg9hqsqe3cjw289xhkdhdfc9ssr2hdq
+POOL_VRF_PK: vrf_pk1g3ac9l7fg27au7zxwc4tyj2pua35tfvrguwf0hg203rez3jffgvsqmtp57
+#2. Create KES keys
+POOL_KES_SK: kes25519-12-sk1qqqqqq9hcm2aqrhx024uxd748jkrs687qesd945guja5lzqlx36k74yn0g3mgtdevyqzla895ylcdlp8rcq7vqepp6nnpegyunvtupjs6qlyax2lxr8rdzkk846546jkahc5fj63yzhh9fx7ev3cg7x267fms0zdhxeeavzphdhf3cj8cnw9395xf7rufdkge2c033k32rf3q52sd3allhpmqzxrxgy9226236yhesals88l4wl3yupddxa5575cauz0pe2fwe56uhua4t77a8dajgnnmdf997dugx4wk523z3nqskxchp9dyguccwush6pqfax57dr7gj7zcjcrtmfugny3tzc6cyzkyy4wfe3fht6sf2tzy2v5f3kya6jehnz2lv6uqzd8jv7vr35l95g79rjcfrlc9xqrz8q7h2n6hl8lwhv0gdqjuctw40rrakjuhwgd0r2w7t5vwvvvkuuzxf9jq68a0u8kjxp4seeczlp7fmar4e9jc9pvn5hhc30knhfh0jnzckexlh9an053508x9m6qvt37ra4ls8h43req6lu2d8xgv9sptkf9syafvyhqkumqwpx28xng4s9uymv3tk82hhhrxh3kftxqghjt9874ry855axxsacnqxmzh9xxmkxgc5q2l9dgpdhrvdtdk9nhv32ct3yuaw432l5z4e9uct87l294qjnjgz40xk0vczffwqeu8x2l37k6kzjv8daee3hy2kv5f6fkxpd3npj3hmdhvr4d90sstm7v0rr6e5egtdmgd5w6s4n6ntzf7z0qmskrvs2drvejl0hdg7vt76a2a6frf7z3jnfze0d4402x437xa4whu8s4nmxpf5a67a96qvjawphntw6rpp48pzm08a0kr0ka5480w8jfjnlm55xuk06e5fudyq4dgj73kdphz9ssay4whtxssfc7wrwx33dudpddjlsvz6qphsttudlphsyteu5p6djuwt6mpdk27pfnpgftn2lnvnnpx952rz6rywhlqzwvecgud0sf3g059xqhfwn34acjhr5kzrqda3sj9wqp8kl9rts2a66ljecjfhay83l3qzgwscpy67wzcjn4pgq26ljhczkzg9y5lhgj75fa06wv09xmvrk6t4j2l8mrxwga7ksnsc55tl7qc3rhxwnxj4a070qu8g87xchcyuxp570zwjcw08auhy2tumsmmzh0rhrru8sngsd67mmz8dpdh9ssqtl5uksnlphuyu0qresryy82wv89qnjd30sx2rgrunjf7q4krr8c4ze5enlsq42rx9safl66wsknr8d8f7v09qr03lakkc6awayy9qmruu0l6u97hvgnz7slff9hrj9xu4atghjmc5d4wmznyeyq2th2ddwrmgercgjpl50f7qstg3kjlj3t402tp5pnesvjlg4zduvux3ev6sm5ja5j4uyum825pxz6jyeaqphpzggzef30tkxcvejnv5vk49qz7q429lwe45uhrn2d69hj64lq59hcd7dtds8nleshfqtxyw4mpvddjdsfu2c9448l688uq2xy7twsu8cnylv43jvh92fv2re9rrn9rz7jz04chms0x7zxcj8l7kdulxvvvjn4e70cmfnwn27jvw3a73t5y25uwpul9ygr9w76vhc8ptwz554sguc6mdmupp37r3fe8dyhmt99jqcv3kr0z99c6w230q377fxqfzj6alsv0dsmn039usva84z2vs4ajmjvpreue3qxs6vqxc5tqchu74l4fndcp27adeah2tku6excg6skhuwam4vy0y62mpa09ukk7rr3mdaxt9uw9zv7p2an7j0074hw5wvf2fx9cm2rn8yzvzfjmwqwc2u3t37smpwthqz8dyeukl5gmnyt5avy25elwzuwf838ce70rju477ycv2dxc4psv5uncjdz9ttyzp
+POOL_KES_PK: kes25519-12-pk1lp3ta4aphvpct84cykhq37cd9vh9005y02gxhrnd0djdcns6up2sjgn884
+#3. Create the Stake Pool certificate using above VRF and KEY public keys
+ Sign the Stake Pool certificate
+SIGNED_STAKE_POOL_CERTIFICATE: signedcert1qvqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqz3rmstlujs4ameuyva32kfy5remrgkjcx3cujlws5lz8j9ryjjselp3ta4aphvpct84cykhq37cd9vh9005y02gxhrnd0djdcns6up2sr8kwjxh8kwxwgnuhx25lmdewkafq5dmc3thjrv0td8r7298m8pw7qqqqqqqqqqqzwyqqqqqqqqqqqqqsqqqqqqqqqqq2qqqqqqqqpapyqqqpqq23upxuk26389w6579x6988j6d6chsz2xvzptcelcsgnepyte4nf0rpln9j4vp70gs0z2kqysht2ztm06zrx2s473kjjc8a8m2024grxeq4sp
+#4. Send the signed Stake Pool certificate to the blockchain
+===============Send Certificate=================
+CERTIFICATE_PATH: stake_pool.cert
+REST_PORT: 3100
+ACCOUNT_SK: ed25519e_sk1lq2zcyms6exxan0xx2gufjt2hdgsxmytgv5fl7nd4agzc89e6eympdwrhc2e59zkhqrpp3gnc4cfp5kf9xqufr9kn7ddl5uvtdsr84q5rg3ge
+BLOCK0_HASH: c8a1b4b8cd3b6a6c39adba11f62c34230b37b388f5a8edfe8cd73e7b8f811f48
+FEE_CONSTANT: 2
+FEE_COEFFICIENT: 1
+FEE_CERTIFICATE: 4
+==================================================
+#1. Create the offline transaction file
+#2. Add the Account to the transaction
+#3. Add the certificate to the transaction
+#4. Finalize the transaction
+#5. Make the witness
+#6. Add the witness to the transaction
+#7. Show the transaction info
+---
+balance: 0
+fee: 7
+input: 7
+inputs:
+  - account: 9ece91ae7b38ce44f9732a9fdb72eb7520a37788aef21b1eb69c7e514fb385de
+    kind: account
+    value: 7
+num_inputs: 1
+num_outputs: 0
+num_witnesses: 1
+output: 0
+outputs: []
+sign_data_hash: e9ebf7833745cc254bbc1652b4247231946e46a3c343535de8e1de31e163af84
+status: finalizing
+#8. Seal the transaction
+#9. Auth the transactions
+#10. Encode and send the transaction
+76c4ff1a8710036531f266dd2fab10183b319a68be04bd451081f9448e6f570d
+#11. Remove the temporary files
+#Waiting for new block to be created (timeout = 200 blocks = 400s)
+New block was created - 80d812d1fc73a4c8dbd24bf42276ca1f008a93496259ea36a54017de6c76aeca
+#5. Retrieve your stake pool id (NodeId)
+f76184d75c075e08de3750fecd10e5956751f028b5056d121ce0ea87575f5970
+============== Stake Pool details ================
+Stake Pool ID:    f76184d75c075e08de3750fecd10e5956751f028b5056d121ce0ea87575f5970
+Stake Pool owner: ca1sk0vaydw0vuvu38ewv4flkmjad6jpgmh3zh0yxc7k6w8u520kwzauynxpks
+TAX_VALUE:        10000
+TAX_RATIO:        1/10
+TAX_LIMIT:        1000000
+==================================================
+#6. Create the node_secret.yaml file
+#+end_src
+
+
+
+-  Check the results
+
+If everything is fine and you did not receive any error, the last line
+of the script output is your =Stake Pool Node ID=. Now you can check if your
+stake pool id appears in the list of available stake pools by executing
+the below command.
+
+#+name: stake-pools-list
+#+begin_src sh  :tangle ./doitlive/win02ch04.sh :exports none :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+export STAKEPOOL_ID=$(cat createStakePool_output.txt | grep -Po "(Stake Pool ID:    [0-9a-z]+?)$" | cut -f2 -d: |xargs)
+#+end_src
+
+** 4.4 Check that the stake pool is in the  blockchain.
+
+Get the list of stake pools.
+
+#+name: stake-pools-list
+#+begin_src sh  :tangle ./doitlive/win02ch04.sh :exports both :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+./jcli rest v0 stake-pools get --host "http://127.0.0.1:3100/api"
+#+end_src
+
+#+RESULTS: stake-pools-list
+#+begin_src yaml
+---
+- 94477e509813cadd8319ed992cb34a0d80d230314869716584d322faf4e4b096
+- ca9aa1cc152d6b1d38010f435844fad575d33c4757dfd1f815d8268daf313e82
+- 423d9ed634159234c6ac0bd86b9f0e3801458318982b2493e111bdb6ac66632d
+- 73fa04ffd5b60da447951c661fb6b9684005cf7ab670e6adc258cbd77f47d509
+- 38096b6c255a45e1e51f468dc5de5ff3e2c960a7c66954ca43f3decf15797341
+- cc38f8c67bc0645479929550378e6e6a2f1cd2e0caeb20575299de336450a80f
+- fe6ed675f1085551bdd275f8ce050d064c5b6f5511fa6c1ad58ace97df0b0466
+- 954f3c26c69c4c8f7f46725b457bc01b6fec07287d3aee41fe62adb8cb139758
+- 8a27c43b32a3d8dd8304e996b870d4b3d62da11ee0c190cbb24ed345c1298bda
+- 050e6b00e08a72ad32f8d5c223938275ffdc8f878909d2c802483353c25de237
+- 7d2f27d242630ba50604d4d422da9c750e6c8f138888fb1d1f18b6a07f1f813c
+- f76184d75c075e08de3750fecd10e5956751f028b5056d121ce0ea87575f5970
+#+end_src
+
+
+You can see that our =Node-id= is part o of the list.
+
+** 4.2 Restart Jormungandr as a stake pool
+   Now you can start the node as a *leader candidate*, using the
+   =--secret node_secret.yaml= parameter. The =node_secret.yaml= file
+   was automatically created in the same location as
+   =createStakePool.sh=.
+
+   In order to do that return to the same terminal where Jormungandr is running and stop the server.
+   restart it with the secret parameter.
+
+   #+begin_src sh  :tangle ./doitlive/win01ch4.sh :exports code :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+     ./jormungandr --genesis-block-hash $(cat genesis-hash.txt) --config ./stakepool-config.yaml --secret ./node_secret.yaml
+   #+end_src
+
+* 5. Register stake pool to the Cardano Foundation
+In order for your stake pool to appear as part of the Daedalus interface. So that ADA Holders can delegate stake to you.
+You can check the official process here: [[https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry][Github Incentivized Testnet Stake Pool Registry]]
+
+
+Let's follow the process for our running example.
+
+   #+begin_src sh  :tangle ./doitlive/win02ch05.sh :exports none :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   #doitlive commentecho: true
+   open file:///home/agarciafdz/video_tutorial/stakepool_journey/stakepool_operator_journey.svg
+   clear
+
+   # 5. Register stake pool to Cardano Foundation
+   open https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry
+
+   #+end_src
+
+** 5.1 Fork and clone the Cardano Foundation Registry repository.
+
+   On GitHub go to the [[https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry][Cardano Foundation Incentivized Testnet Stake Pool Registry]]
+   And then create a [[https://help.github.com/en/github/getting-started-with-github/fork-a-repo][fork in your own account]].
+
+   Then clone your fork
+
+   #+name: GITHUB_USERNAME
+   #+begin_src sh  :tangle ./doitlive/win02ch05.sh  :exports none :results value org :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   export GITHUB_USERNAME='elviejo79'
+   #+end_src
+
+   With your username you can clone the repository:
+
+   #+begin_src sh  :tangle ./doitlive/win02ch05.sh :exports code :results value output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   git clone git@github.com:$GITHUB_USERNAME/incentivized-testnet-stakepool-registry.git
+   #+end_src
+
+   #+RESULTS:
+   #+begin_src sh
+   Cloning into 'incentivized-testnet-stakepool-registry'...
+   remote: Enumerating objects: 33, done.
+   (1/33)        remote: Counting objects:   6% (2/33)        remote: Counting objects:   9% (3/33)        remote: Counting objects:  12% (4/33)        remote: Counting objects:  15% (5/33)        remote: Counting objects:  18% (6/33)        remote: Counting objects:  21% (7/33)        remote: Counting objects:  24% (8/33)        remote: Counting objects:  27% (9/33)        remote: Counting objects:  30% (10/33)        remote: Counting objects:  33% (11/33)        remote: Counting objects:  36% (12/33)        remote: Counting objects:  39% (13/33)        remote: Counting objects:  42% (14/33)        remote: Counting objects:  45% (15/33)        remote: Counting objects:  48% (16/33)        remote: Counting objects:  51% (17/33)        remote: Counting objects:  54% (18/33)        remote: Counting objects:  57% (19/33)        remote: Counting objects:  60% (20/33)        remote: Counting objects:  63% (21/33)        remote: Counting objects:  66% (22/33)        remote: Counting objects:  69% (23/33)        remote: Counting objects:  72% (24/33)        remote: Counting objects:  75% (25/33)        remote: Counting objects:  78% (26/33)        remote: Counting objects:  81% (27/33)        remote: Counting objects:  84% (28/33)        remote: Counting objects:  87% (29/33)        remote: Counting objects:  90% (30/33)        remote: Counting objects:  93% (31/33)        remote: Counting objects:  96% (32/33)        remote: Counting objects: 100% (33/33)        remote: Counting objects: 100% (33/33), done.
+   (1/28)        remote: Compressing objects:   7% (2/28)        remote: Compressing objects:  10% (3/28)        remote: Compressing objects:  14% (4/28)        remote: Compressing objects:  17% (5/28)        remote: Compressing objects:  21% (6/28)        remote: Compressing objects:  25% (7/28)        remote: Compressing objects:  28% (8/28)        remote: Compressing objects:  32% (9/28)        remote: Compressing objects:  35% (10/28)        remote: Compressing objects:  39% (11/28)        remote: Compressing objects:  42% (12/28)        remote: Compressing objects:  46% (13/28)        remote: Compressing objects:  50% (14/28)        remote: Compressing objects:  53% (15/28)        remote: Compressing objects:  57% (16/28)        remote: Compressing objects:  60% (17/28)        remote: Compressing objects:  64% (18/28)        remote: Compressing objects:  67% (19/28)        remote: Compressing objects:  71% (20/28)        remote: Compressing objects:  75% (21/28)        remote: Compressing objects:  78% (22/28)        remote: Compressing objects:  82% (23/28)        remote: Compressing objects:  85% (24/28)        remote: Compressing objects:  89% (25/28)        remote: Compressing objects:  92% (26/28)        remote: Compressing objects:  96% (27/28)        remote: Compressing objects: 100% (28/28)        remote: Compressing objects: 100% (28/28), done.
+   (1/33)   Receiving objects:   6% (2/33)   Receiving objects:   9% (3/33)   Receiving objects:  12% (4/33)   Receiving objects:  15% (5/33)   Receiving objects:  18% (6/33)   Receiving objects:  21% (7/33)   Receiving objects:  24% (8/33)   Receiving objects:  27% (9/33)   Receiving objects:  30% (10/33)   Receiving objects:  33% (11/33)   Receiving objects:  36% (12/33)   Receiving objects:  39% (13/33)   Receiving objects:  42% (14/33)   Receiving objects:  45% (15/33)   Receiving objects:  48% (16/33)   remote: Total 33 (delta 13), reused 8 (delta 1), pack-reused 0
+   (17/33)   Receiving objects:  54% (18/33)   Receiving objects:  57% (19/33)   Receiving objects:  60% (20/33)   Receiving objects:  63% (21/33)   Receiving objects:  66% (22/33)   Receiving objects:  69% (23/33)   Receiving objects:  72% (24/33)   Receiving objects:  75% (25/33)   Receiving objects:  78% (26/33)   Receiving objects:  81% (27/33)   Receiving objects:  84% (28/33)   Receiving objects:  87% (29/33)   Receiving objects:  90% (30/33)   Receiving objects:  93% (31/33)   Receiving objects:  96% (32/33)   Receiving objects: 100% (33/33)   Receiving objects: 100% (33/33), 12.19 KiB | 304.00 KiB/s, done.
+   (0/13)   Resolving deltas:  53% (7/13)   Resolving deltas:  76% (10/13)   Resolving deltas:  84% (11/13)   Resolving deltas: 100% (13/13)   Resolving deltas: 100% (13/13), done.
+   #+end_src
+
+** 5.2 Create stake pool JSON file
+
+   In order to register with the Cardano Foundation we need to create a json file with the following fields:
+   - owner :: public key of the stake pool operator. Created on step  [[#create-an-account-address-using-the-script][3.1]] of this guide.
+   - name :: name your stake pool
+   - ticker :: three to five characters that identify your stake pool
+   - homepage :: your website, where you can inform the public about the advantages of your stake pool.
+   - pledge_address :: account address of your stake pool. Created on step [[#create-an-account-address-using-the-script][3.1]] of this guide.
+
+   #+name: doitlive-replace-template-with-values
+   #+begin_src sh  :tangle ./doitlive/win02ch05.sh :exports none :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   gedit ../utils/registry_template.json
+   envsubst < ../utils/registry_template.json > ./incentivized-testnet-stakepool-registry/registry/$PUBLIC_KEY_PK.json
+   #+end_src
+
+   With that information the json file for this example is:
+   #+begin_src sh  :tangle ./doitlive/win02ch05.sh :exports result :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool/
+   cat ./incentivized-testnet-stakepool-registry/registry/$PUBLIC_KEY_PK.json
+   #+end_src
+
+   #+RESULTS:
+   #+begin_src js
+   {
+   'owner': 'ed25519_pk1nm8frtnm8r8yf7tn920akuhtw5s2xaug4mepk84kn3l9znansh0qn206ej',
+   'name': 'Example stake pool name',
+   'ticker': 'EXAMP',
+   'homepage': 'https://example.org',
+   'pledge_address': 'addr1sk0vaydw0vuvu38ewv4flkmjad6jpgmh3zh0yxc7k6w8u520kwzaus7z93h'
+   }
+   #+end_src
+
+
+   Your file should be named the same way as your public key with *.json* extension
+
+
+** 5.3 Sign with your owner Private Key
+   We need to make sure that the person making the submission is the owner of the Public key in the json file.
+   The way to do that is to sign the submission with the secret key created on step [[#create-an-account-address-using-the-script][3.1]] of this guide.
+
+   The next command requires the Secret Key to be stored in a file so let's just save it in a file named =owner.prv=
+
+   #+begin_src sh  :tangle ./doitlive/win02ch05.sh :exports both :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool/
+   echo $PRIVATE_KEY_SK > owner.prv
+   #+end_src
+
+   #+RESULTS:
+
+   Now to sign the .json file we would use
+   #+name: signed_stakepool
+   #+begin_src sh  :tangle ./doitlive/win02ch05.sh :exports result :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool/
+   ./jcli key sign --secret-key owner.prv --output ./incentivized-testnet-stakepool-registry/registry/$PUBLIC_KEY_PK.sig ./incentivized-testnet-stakepool-registry/registry/$PUBLIC_KEY_PK.json
+   #+end_src
+
+** 5.4 Verify that we have the correct files.
+   Now just let's do a sanity check and make sure we have both files that will be required:
+
+   #+name: json_and_signature
+   #+begin_src sh  :tangle ./doitlive/win02ch05.sh :exports both :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool/
+   ls  ./incentivized-testnet-stakepool-registry/registry/* | sort
+   #+end_src
+
+   You should see two files one with .json and one with .sig extension.
+   #+RESULTS: json_and_signature
+   #+begin_src sh
+   ./incentivized-testnet-stakepool-registry/registry/ed25519_pk1nm8frtnm8r8yf7tn920akuhtw5s2xaug4mepk84kn3l9znansh0qn206ej.json
+   ./incentivized-testnet-stakepool-registry/registry/ed25519_pk1nm8frtnm8r8yf7tn920akuhtw5s2xaug4mepk84kn3l9znansh0qn206ej.sig
+   #+end_src
+
+** 5.5 Commit files
+   Now all we need to do is do a common git commit
+
+   #+begin_src sh  :tangle ./doitlive/win02ch05.sh :exports both :results output  :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool/
+   cd ./incentivized-testnet-stakepool-registry/registry/
+   git add $PUBLIC_KEY_PK.json
+   git add $PUBLIC_KEY_PK.sig
+   git commit -m "EXAMP"
+   git push
+   cd ../../
+   #+end_src
+
+** 5.6 Create Pull Request
+   Now just go to the normal GitHub user interface and create a [[https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request][pull request]] as you would do on any other github project.
+
+** 5.7 Check that the stake pool appears in the Daedalus wallet.
+   Once the Cardano Foundation approves your =pull request=, you should see your stake pool listed in the delegation interface of Daedalus.
+
+* 6. Delegate your stake to your stake pool
+** 6.1 Download the delegate-account script
+
+    #+begin_src sh  :tangle ./doitlive/win02ch06.sh :exports none :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+    #doitlive commentecho: true
+    open file:///home/agarciafdz/video_tutorial/stakepool_journey/stakepool_operator_journey.svg
+    clear
+
+    # 6. Delegate stake to your stake pool
+    open https://github.com/input-output-hk/jormungandr-qa/
+    #+end_src
+
+
+  #+begin_src sh  :tangle ./doitlive/win02ch06.sh :exports both :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+    curl -sLOJ https://raw.githubusercontent.com/input-output-hk/jormungandr-qa/master/scripts/delegate-account.sh
+    chmod +x delegate-account.sh
+   #+end_src
+
+   #+RESULTS:
+
+** 6.2 Check the parameters required by the script
+   #+begin_src sh  :tangle ./doitlive/win02ch06.sh :exports both :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   ./delegate-account.sh --help
+   #+end_src
+
+   #+RESULTS:
+   #+begin_src sh
+   <REST-LISTEN-PORT> <ACCOUNT-SK>
+   The ID of the Stake Pool you want to delegate to
+   The REST Listen Port set in node-config.yaml file (EX: 3101)
+   The Secret key of the Account address
+   #+end_src
+
+** 6.3 Execute the script
+   #+begin_src sh  :tangle ./doitlive/win02ch06.sh :exports both :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   ./delegate-account.sh $STAKEPOOL_ID 3100 $PRIVATE_KEY_SK
+   #+end_src
+
+** 6.4 Check that your stake was delegated
+
+   #+begin_src sh  :tangle ./doitlive/win02ch06.sh :exports both :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   ./jcli rest v0 account get $ACCOUNT_ADDRESS -h http://127.0.0.1:3100/api
+   #+end_src
+
+   #+RESULTS:
+   #+begin_src yaml
+   ---
+   counter: 0
+   delegation:
+   pools: []
+   last_rewards:
+   epoch: 0
+   reward: 0
+   value: 10000000000
+   #+end_src
+
+
+
+* 7. Monitor Delegated Stake
+  At it's most basic is easy to see how much delegated stake the pool has.
+  Simply get the balance of the stake pool account and it displays the delegated stake
+
+    #+begin_src sh  :tangle ./doitlive/win02ch07.sh :exports none :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+    #doitlive commentecho: true
+    #doitlive env: EDITOR=STAKEPOOL_ID=$(cat createStakePool_output.txt | grep -Po "(Stake Pool ID:    [0-9a-z]+?)$" | cut -f2 -d: |xargs)
+
+    open file:///home/agarciafdz/video_tutorial/stakepool_journey/stakepool_operator_journey.svg
+    clear
+
+    # 7. Monitor Delegated Stake
+    #+end_src
+
+** 7.1 Check delegated stake through JCLI
+   #+name: delegated_balance
+   #+begin_src sh  :tangle ./doitlive/win02ch07.sh :exports both :results value org :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
+   ./jcli rest v0 stake-pool get $STAKEPOOL_ID --host "http://127.0.0.1:3100/api"
+   #+end_src

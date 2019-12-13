@@ -1,0 +1,74 @@
+@startuml
+!define LIGHTRED
+!include https://raw.githubusercontent.com/Drakemor/RedDress-PlantUML/master/style.puml
+skinparam sequence {
+        ParticipantBackgroundColor Transparent
+        ParticipantBorderColor Transparent
+        svgLinkTarget _blank
+        shadowing false
+}
+ skinparam shadowing false
+
+title Stake pool operator journey
+
+actor "ADA holder" as AdaHolder
+actor "Stakepool Operator" as SPO
+participant "<img:./img/daedalus.png>\nDaedalus" as Daedalus
+
+participant "Jormungandr" as Jormungandr
+participant "jcli" as Jcli
+
+participant "<img: ./img/shelley.png> \n Shelley Intecentivized Testnet" as Testnet
+participant "<img: ./img/cardano.png> \n Stake pool Registry" as SPRegistry
+
+
+autonumber
+== 1. Restore founds in Daedalus / Yoroi [[https://www.youtube.com/watch?v=g5L6dkOtAyw video]]==
+SPO -> Daedalus : Check balance in testnet
+Daedalus -> Daedalus : Migrate to new wallet with new address
+Daedalus -> SPO : New Account with old balance
+
+== 2. Start Jormungandr node [[https://github.com/elviejo79/stakepool-management-tools/blob/SPM-48-UI-integration/electron-app/doc/get_started.md#start-jormungandr-node details]]==
+SPO -> Jormungandr : Initial configuration (genesis-hash, config.yaml)
+Jormungandr -> Testnet: Get latest blocks
+Testnet -> Jormungandr: Recent blocks
+Jormungandr -> SPO: Logs
+SPO -> Jcli : Check that the node is synchronizing
+Jcli -> SPO : blockCnt, uptime
+
+== 3. Fund stake pool owner account in JCLI [[https://github.com/elviejo79/stakepool-management-tools/blob/SPM-48-UI-integration/electron-app/doc/get_started.md#fund-stake-pool-owner-account-in-jcli details]] ==
+SPO -> Jcli: Create Stakepool Account
+return Address, Public Key, Secret Key
+SPO -> Daedalus: Send funds to stake pool Account
+Daedalus -> Jcli : fund to stake pool Account
+
+== 4. Create Stake pool certificate in JCLI [[https://github.com/elviejo79/stakepool-management-tools/blob/SPM-48-UI-integration/electron-app/doc/get_started.md#create-a-stake-pool-certificate-in-jcli details]]==
+Jcli -> Jcli : Create Stake pool certificate
+Jcli -> Testnet: Send Stake pool certificate
+return Success
+Jcli -> Testnet: Check Stake pool is visible
+return List of Stake pools
+Jcli -> SPO : List of Stake pools
+
+
+== 5. Register Stake pool to CF [[https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry details]]==
+SPO -> SPO : Form Yaml with Registration Information
+SPO -> SPRegistry: Pull Request with Registration information
+return Success: Pull Request was merged
+
+== 6. Delegate Stake to the Pool using Daedalus / Yoroi==
+AdaHolder -> Daedalus: Get list of Stake pools
+Daedalus -> SPRegistry: Get stake pools Ticker
+return List of stake pools
+Daedalus -> AdaHolder: List of stake pools
+AdaHolder -> Daedalus: Delegate to selected stake pool
+Daedalus -> Testnet : Record delegation certificate
+return Success
+Daedalus -> AdaHolder: Success
+
+== 7. Monitor delegated Stake ==
+SPO -> Jcli : Check total delegated stake
+Jcli -> Testnet : Filter delegated stake
+Testnet -> Jcli : Delegated transactions
+Jcli -> SPO : Show delegated stake
+@enduml

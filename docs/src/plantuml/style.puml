@@ -1,0 +1,244 @@
+@startuml
+
+!ifndef FONTNAME
+!define FONTNAME "Verdana"
+!endif
+
+!ifndef FONTSIZE
+!define FONTSIZE 11
+!endif
+
+!ifdef DARKBLUE
+skinparam backgroundColor 777
+!define ACCENT 1a66c2
+!define ACCENTDARK 002642
+skinparam stereotypeCBackgroundColor ACCENT
+!define DARKSTYLE
+!endif
+!ifdef LIGHTBLUE
+!define ACCENT 2a86e2
+!define ACCENTDARK 1a66c2
+skinparam stereotypeCBackgroundColor ACCENTDARK
+!define LIGHTSTYLE
+!endif
+
+!ifdef DARKRED
+!define ACCENT 880000
+!define ACCENTDARK 330000
+skinparam stereotypeCBackgroundColor ACCENT
+!define DARKSTYLE
+!endif
+!ifdef LIGHTRED
+!define ACCENT CC0033
+!define ACCENTDARK AA0033
+skinparam stereotypeCBackgroundColor ACCENTDARK
+!define LIGHTSTYLE
+!endif
+
+!ifdef DARKGREEN
+!define ACCENT 228811
+!define ACCENTDARK 113300
+skinparam stereotypeCBackgroundColor ACCENT
+!define DARKSTYLE
+!endif
+!ifdef LIGHTGREEN
+!define ACCENT 55BB33
+!define ACCENTDARK 338822
+skinparam stereotypeCBackgroundColor ACCENTDARK
+!define LIGHTSTYLE
+!endif
+
+!ifdef DARKORANGE
+!define ACCENT BB6600
+!define ACCENTDARK 662200
+skinparam stereotypeCBackgroundColor ACCENT
+!define DARKSTYLE
+!endif
+!ifdef LIGHTORANGE
+!define ACCENT FF8800
+!define ACCENTDARK BB6600
+skinparam stereotypeCBackgroundColor ACCENT
+!define LIGHTSTYLE
+!endif
+
+!ifdef LIGHTSTYLE
+!define PRIMARY 000
+!define SECONDARY 333
+!define ARROWCOLOR 000
+!define ARROWFONTCOLOR 333
+!define BORDERCOLOR aaa
+!define BOXBG ccc
+skinparam backgroundColor fff
+!endif
+
+!ifdef DARKSTYLE
+!define PRIMARY fff
+!define SECONDARY aaa
+!define ARROWCOLOR fff
+!define ARROWFONTCOLOR bbb
+!define BORDERCOLOR 1b1b1b
+!define BOXBG 2e2e2e
+skinparam backgroundColor 777
+!endif
+
+!function font_style()
+  fontColor PRIMARY
+  fontName FONTNAME
+  fontSize FONTSIZE
+  stereotypeFontColor SECONDARY
+  stereotypeFontSize FONTSIZE
+!endfunction
+
+!function basic_style()
+  backgroundColor BOXBG
+  borderColor BORDERCOLOR
+!endfunction
+
+!function accent_style()
+  backgroundColor ACCENT
+  borderColor ACCENTDARK
+!endfunction
+
+!function arrow_style()
+  arrowColor ARROWCOLOR
+  arrowFontName FONTNAME
+  arrowFontColor ARROWFONTCOLOR
+  arrowFontSize FONTSIZE
+!endfunction
+
+' Class diagrams
+
+skinparam circledCharacter {
+  radius 8
+  fontSize FONTSIZE
+  fontName FONTNAME
+}
+
+skinparam class {
+  basic_style()
+  font_style()
+  arrow_style()
+
+  attributeFontColor SECONDARY
+  attributeFontSize FONTSIZE
+  attributeIconSize FONTSIZE
+}
+
+' Sequence diagrams
+
+skinparam actor {
+  accent_style()
+  font_style()
+}
+
+skinparam participant {
+  basic_style()
+  font_style()
+}
+
+' Component diagrams
+
+skinparam interface {
+  accent_style()
+  font_style()
+}
+
+skinparam component {
+  basic_style()
+  font_style()
+}
+
+skinparam node {
+  basic_style()
+  font_style()
+}
+
+skinparam database {
+  basic_style()
+  font_style()
+}
+
+skinparam queue {
+  basic_style()
+  font_style()
+}
+
+' Use Case diagrams
+
+skinparam usecase {
+  basic_style()
+  font_style()
+  arrow_style()
+}
+
+skinparam activity {
+  basic_style()
+  font_style()
+  arrow_style()
+}
+
+skinparam sequence {
+  font_style()
+  arrow_style()
+
+  lifeLineBorderColor ARROWCOLOR
+  lifeLineBackgroundColor ARROWFONTCOLOR
+}
+
+skinparam boundary {
+  accent_style()
+  font_style()
+}
+
+skinparam control {
+  accent_style()
+  font_style()
+}
+
+skinparam entity {
+  accent_style()
+  font_style()
+}
+
+' State diagrams
+
+skinparam state {
+  basic_style()
+  font_style()
+  arrow_style()
+  startColor ACCENT
+  endColor ACCENTDARK
+}
+
+' Object diagrams
+
+skinparam object {
+  basic_style()
+  font_style()
+  arrow_style()
+}
+
+' Common
+
+skinparam note {
+  accent_style()
+  font_style()
+}
+
+skinparam cloud {
+  basic_style()
+  font_style()
+  arrow_style()
+}
+
+skinparam rectangle {
+  basic_style()
+  font_style()
+}
+
+skinparam storage {
+  basic_style()
+  font_style()
+}
+
+@enduml

@@ -1,0 +1,8 @@
+{
+    "owner": "$PUBLIC_KEY_PK",
+    "name": "Example stake pool name",
+    "ticker": "EXAMP",
+    "description": "This is an example for a tutorial",
+    "homepage": "https://example.org",
+    "pledge_address": "$ACCOUNT_ADDRESS"
+}
