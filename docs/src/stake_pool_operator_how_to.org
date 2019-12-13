@@ -400,7 +400,7 @@ lastBlockTx: 1
 state: Running
 txRecvCnt: 1
 uptime: 46
-version: jormungandr 0.8.0-rc7-ab32b2c
+version: jormungandr 0.8.0-ab32b2c
 #+end_src
 
 Your node is synced with the blockchain when it receives all the blocks
