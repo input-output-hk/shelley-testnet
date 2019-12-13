@@ -25,8 +25,8 @@
    Since I don't seem to understand how var and tangle work I need to replace this stings
 
    #+begin_src sh
-   sed -i 's/v0.8.0-rc9+1/v0.8.0-rc9+1/g' ./stake_pool_operator_how_to.org
-   sed -i 's/nightly/nightly/g' ./stake_pool_operator_how_to.org
+   sed -i 's/v0.8.0/v0.8.0/g' ./stake_pool_operator_how_to.org
+   sed -i 's/legacy/legacy/g' ./stake_pool_operator_how_to.org
    #+end_src
 
 
@@ -136,7 +136,7 @@
 
   A Stake pool operator plays a fundamental role in the health and decentralization of the Cardano Blockchain. In the following sections we are going to see *How to become a stake pool operator*.
 
-  Keep in mind the following diagram as we go working with this sections.
+  Keep in mind the following diagram as we go along the process to create a stale pool
 
   [[./images/stakepool_operator_journey.svg]]
 
@@ -193,7 +193,7 @@ Latest version of Jormungandr and JCLI.  Just follow along in the next section. 
    # 2. Start Jormungandr node
    #+end_src
 
-In the following steps we will downloading, configure and start the Jormungandr node.
+First let's download, configure and start the Jormungandr node.
 Note: If you have any issues while installing Jormungandr and JCLI, please refer to our support portal [[https://iohk.zendesk.com/hc/en-us/articles/360036898153][macOS/Linux instructions]].
 
 ** 2.1 Find the latest version of the testnet
@@ -205,14 +205,14 @@ open https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-fi
 #+end_src
 
    #+begin_src sh :exports none :tangle ./doitlive/win01ch2.sh :dir ~/
-   open https://github.com/input-output-hk/jormungandr/releases/v0.8.0-rc9+1/
+   open https://github.com/input-output-hk/jormungandr/releases/v0.8.0/
    #+end_src
 
 ** 2.2 Download Jormungandr from GitHub
    :PROPERTIES:
    :CUSTOM_ID: download-jormungandr-from-github
    :END:
-   On [[https://github.com/input-output-hk/jormungandr/releases/][github.com/input-output-hk/jormungandr/]] you will click =Releases= and from there download the file appropriate for your  operating system.
+   On [[https://github.com/input-output-hk/jormungandr/releases/][github.com/input-output-hk/jormungandr/]] go to =Releases= and from there download the  appropriate file for your  operating system.
 
 -  For Linux download the file ending in
    =...-x86_64-unknown-linux-gnu.tar.gz=
@@ -220,7 +220,7 @@ open https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-fi
    =...-x86_64-apple-darwin.tar.gz=
 
 #+begin_src sh :exports none :tangle ./doitlive/win01ch2.sh :session jor-server  :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
-curl -sLOJ https://github.com/input-output-hk/jormungandr/releases/download/v0.8.0-rc9+1/jormungandr-v0.8.0-rc9+1-x86_64-unknown-linux-gnu.tar.gz
+curl -sLOJ https://github.com/input-output-hk/jormungandr/releases/download/v0.8.0/jormungandr-v0.8.0-x86_64-unknown-linux-gnu.tar.gz
 #+end_src
 
 #+RESULTS:
@@ -231,10 +231,10 @@ curl -sLOJ https://github.com/input-output-hk/jormungandr/releases/download/v0.8
    :END:
 
 -  Using the command line: in terminal, navigate to the directory where
-   you downloaded the archive and execute
+   you downloaded the file and execute the following command to uncompress it:
 #+Name: extracted_files
 #+begin_src sh :exports code :tangle ./doitlive/win01ch2.sh :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
-tar -xzvf jormungandr-v0.8.0-rc9+1-x86_64-unknown-linux-gnu.tar.gz
+tar -xzvf jormungandr-v0.8.0-x86_64-unknown-linux-gnu.tar.gz
 #+end_src
 
 #+RESULTS: extracted_files
@@ -245,10 +245,10 @@ tar -xzvf jormungandr-v0.8.0-rc9+1-x86_64-unknown-linux-gnu.tar.gz
 
 OR
 
-- In Finder: navigate to the folder where you saved the archive (the
-  default is the Downloads folder), Double click the archive to extract
-  it. This will create a folder with the same name as the archive and
-  the folder will have two files in it.
+- In Finder: navigate to the folder where you saved the files (the
+  default is the Downloads folder), Double-click the file to extract
+  it. This will create a folder with the same name as the file,
+  the folder will contain two files in it.
 
 ** 2.4 Verify the files were installed correctly
    :PROPERTIES:
@@ -262,7 +262,7 @@ In Terminal just type
     ./jcli -V
 #+end_src
 
-and it will return something like
+It returns the version of JCLI
 
 #+RESULTS: jcli-version
 #+begin_src sh
@@ -281,21 +281,20 @@ Victory! JCLI is available to us.
     :CUSTOM_ID: download-the-config.yaml-file
     :END:
 From the [[https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-finished/download/1/index.html][Jormungandr Configurations page]], save the config.yaml.
-This file is important because it has the list of trusted peers.
-The trusted peers are the nodes from which we are going to start downloading our own copy of the blockchain.
+We will use this file to start Jormungandr, among other things it has the list of trusted peers from which we are going to download our own copy of the blockchain.
 
 #+name: doitlive-open-website-with-testnet-instructions
 #+begin_src sh  :tangle ./doitlive/win01ch2.sh :exports none :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
 open https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-finished/download/1/index.html
-curl -sLOJ https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandrConfigs.nightly/latest/download/1/nightly-config.yaml
+curl -sLOJ https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandrConfigs.legacy/latest/download/1/legacy-config.yaml
 #+end_src
 #+RESULTS:
 
 *** 2.5.2 Add stake pool configuration parameters
-Since this we are trying to configure a stake pool we need to add to the configuration file our public IP, listen address and the storage location.
+Since we are setting up a stake pool we need to add our public IP, listen address and the storage location to the configuration file.
 
 #+begin_src sh :exports none :tangle ./doitlive/win01ch2.sh :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
-   tail -n +14 ./nightly-config.yaml | cat ./templates/stakepool_config_addenda.json - > ./stakepool-config.yaml
+   tail -n +14 ./legacy-config.yaml | cat ./templates/stakepool_config_addenda.json - > ./stakepool-config.yaml
    open https://www.canyouseeme.org/
 #+end_src
 
@@ -330,14 +329,14 @@ for example:
     :PROPERTIES:
     :CUSTOM_ID: download-the-genesis-hash.txt-file
     :END:
-    From the same  [[https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-finished/download/1/index.html][Jormungandr Configurations page]], you can copy the genesis hash and save it to a file called =genesis-hash.txt=
+    From [[https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-finished/download/1/index.html][Jormungandr Configurations page]], copy the genesis hash and save it to a file called =genesis-hash.txt=
 
 #+name: doitlive-genesis-hash
 #+begin_src sh  :tangle ./doitlive/win01ch2.sh :exports none :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
-curl -sLOJ https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandrConfigs.nightly/latest/download/2/genesis-hash.txt
+curl -sLOJ https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandrConfigs.legacy/latest/download/2/genesis-hash.txt
 #+end_src
 
-Once you have created the genesis-hash, check it's contents to make sure it matches the one Jormungandr Configurations page.
+Once you have created the genesis-hash.txt file, check its contents to make sure it matches the one dispalyed in Jormungandr Configurations page.
 #+begin_src sh :exports both :tangle ./doitlive/win01ch2.sh :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
 cat genesis-hash.txt
 #+end_src
@@ -357,7 +356,7 @@ ls -lrt
 gnome-terminal --profile=client
 #+end_src
 
-Executing the command in the same location where all 3 files were saved.
+Run the following command in the same location where all 3 files were saved.
 
 #+begin_src sh  :tangle ./doitlive/win01ch2.sh :exports code  :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
     ./jormungandr --genesis-block-hash $(cat genesis-hash.txt) --config ./stakepool-config.yaml
@@ -385,7 +384,7 @@ your node is syncing.
 ./jcli rest v0 node stats get --host "http://127.0.0.1:3100/api"
 #+end_src
 
-It will output something like this:
+In the output, `blockRecvCnt` tells how many blocks have been downloaded:
 
 #+RESULTS: get_block_count
 #+begin_src yaml
@@ -408,11 +407,11 @@ Your node is synced with the blockchain when it receives all the blocks
 that are created in the network in real-time. You can check
 that by following the below 2 rules:
 
-1. execute the =node stats= command from above multiple times and check
+1. Execute the =node stats= command from above multiple times and check
    that the value of the lastBlockHash field is updated (with the actual
    blockchain values, there should be a new block created every 2-5
    minutes);
-2. compare the value of the lastBlockTime field (that is in UTC) with
+2. Compare the value of the lastBlockTime field (that is in UTC) with
    the local time of the node. If the difference if more than 10
    minutes, the node might not be =synced= even the node received blocks
    in the past (blockRecvCnt > 0);
@@ -431,16 +430,16 @@ that by following the below 2 rules:
    open https://github.com/input-output-hk/jormungandr-qa/
    #+end_src
 
-In order to register a stake pool in the blockchain, you will need to
-create a stake pool certificate and send it to the blockchain. This will
-require you to have enough funds to pay for the transaction fee. Note:
-Step 3.2 is going to change a lot depending on the time you read this article.
+To register a stake pool in the blockchain, we need to
+create a stake pool certificate and send it to the blockchain. This
+requires us to have enough funds to pay for the transaction fee. Note:
+Step 3.2 will change once the Incentivized testent is launched.
 
 ** 3.1 Create an account address using the script
    :PROPERTIES:
    :CUSTOM_ID: create-an-account-address-using-the-script
    :END:
-   Run the following command to download the =createAddress.sh= script into that location
+   Run the following command to download the =createAddress.sh= script in the same location:
 
 
 #+begin_src sh  :tangle ./doitlive/win02ch03.sh :exports both :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
@@ -449,7 +448,7 @@ Step 3.2 is going to change a lot depending on the time you read this article.
 
 #+RESULTS:
 
-   Make the script executable
+   Make the script executable:
 
 #+begin_src sh  :tangle ./doitlive/win02ch03.sh :exports both :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
     chmod +x createAddress.sh
@@ -464,8 +463,7 @@ Step 3.2 is going to change a lot depending on the time you read this article.
     ./createAddress.sh account | tee stakepool_owner_account.txt
 #+end_src
 
-The result is similar to the following, *IT IS EXTREMELY IMPORTANT THAT
-YOU SAVE YOUR KEYS FOR FUTURE USE*
+The script returns your cryptographic keys and an address of type account. We are saving them in the file stakepool_owner_account.txt *IT IS EXTREMELY IMPORTANT THAT YOU SAVE YOUR KEYS FOR FUTURE USE*
 
 #+RESULTS: create_account
 #+begin_src sh
@@ -487,19 +485,19 @@ export ACCOUNT_ADDRESS=$(cat stakepool_owner_account.txt | grep -Po "(addr[0-9a-
    :CUSTOM_ID: send-funds-to-your-stake-pool-account
    :END:
 
-Depending on the time you are reading this How-to you will have three options to finance your account.
+Depending on when you are reading this How-to, you will have three options to finance your account.
 
-1. Using the Faucet in the nightly testnet with fake tokens
+1. Using the Faucet in the legacy testnet with test tokens.
 2. Using the Cardano-Wallet with command line.
-3. Using Daedalus directly
+3. Using Daedalus.
 
 
 *** 3.2.1 For The Nightly Testnet
-Funding your account for the Nightly testnet is pretty simple, since we are not using real ADAs you can use a Faucet, that disperses funds for free.
+Funding your account for the Nightly testnet is simple, it has a Faucet that disperses test tokens so that you can practice and experiment with them.
 
 #+name: faucet_results
 #+begin_src sh  :tangle ./doitlive/win02ch03.sh :exports both :results output code :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
-curl -X POST https://faucet.nightly.jormungandr-testnet.iohkdev.io/send-money/$ACCOUNT_ADDRESS
+curl -X POST https://faucet.legacy.jormungandr-testnet.iohkdev.io/send-money/$ACCOUNT_ADDRESS
 #+end_src
 
 #+RESULTS: faucet_results
@@ -508,12 +506,12 @@ curl -X POST https://faucet.nightly.jormungandr-testnet.iohkdev.io/send-money/$A
 #+end_src
 
 *** 3.2.2 For the Incentivized Testnet using Cardano-Wallet CLI
-    The autorative source for founding in the Incentivized testnet is this article:
+    The autorative source for funding in the Incentivized testnet is this article:
     [[https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry/wiki/How-to-Register-Your-Stake-Pool#step-3-fund-your-account][How to Register Your Stake Pool]] follow the tutorial along
     and come back, once you have sent yourself some funds.
 
 *** 3.2.3 For the Incentivized Testnet using Daedalus
-    With version of Daedalus for the Incentivized testnet you will be able to finance your account directly. Simply sending funds to your =$ACCOUNT_ADDRESS=.
+    With the Daedalus version for the Incentivized testnet you will be able to finance your account directly from your wallet sending funds to your =$ACCOUNT_ADDRESS=.
 
 
 ** 3.3 Check balance in your stake pool account
@@ -556,8 +554,8 @@ curl -X POST https://faucet.nightly.jormungandr-testnet.iohkdev.io/send-money/$A
 
 -  Download the =createStakePool.sh= script from the [[https://github.com/input-output-hk/jormungandr-qa/tree/master/scripts][repository]]
    and save it to the directory where you stored the rest of the files
-   (jcli, Jormungandr, config.yaml, etc) You can download the script
-   using your browser or the following commands
+   (jcli, Jormungandr, config.yaml, etc). You can download the script
+   using your browser or the following commands:
 
 -  Open the terminal in the location where you have the rest of the
    files (jcli, Jormungandr, config.yaml, etc) and run the below
@@ -573,7 +571,7 @@ curl -sLOJ https://raw.githubusercontent.com/input-output-hk/jormungandr-qa/mast
 
 Check that the scripts were downloaded into the current location by executing =ls= command into the terminal
 
--  Change the scripts permissions in order to be able to execute them
+-  Change the scripts permissions to be able to execute them
 
 #+begin_src sh  :tangle ./doitlive/win02ch04.sh :exports both :results value :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
     chmod +x createStakePool.sh
@@ -617,14 +615,14 @@ echo $PRIVATE_KEY_SK
 $ ed25519e_sk1lq2zcyms6exxan0xx2gufjt2hdgsxmytgv5fl7nd4agzc89e6eympdwrhc2e59zkhqrpp3gnc4cfp5kf9xqufr9kn7ddl5uvtdsr84q5rg3ge
 #+end_src
 
-So let's call the =createStakePool.sh= script with our secret key and save the output to the =createStakePool_output.txt= file
+Call the =createStakePool.sh= script with our secret key and save the output to the =createStakePool_output.txt= file
 
 #+name: createStakePool_output
 #+begin_src sh  :tangle ./doitlive/win02ch04.sh :exports both :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
     ./createStakePool.sh 3100 10000 1/10 1000000 $PRIVATE_KEY_SK | tee createStakePool_output.txt
 #+end_src
 
-That command will give the following output. Pay attention to your node-id and the =node_secret.yaml= file.
+That command returns the following output. Pay attention to your node-id and the =node_secret.yaml= file.
 #+RESULTS: createStakePool_output
 #+begin_src sh
 + + ./createStakePool.sh 3100 10000 1/10 1000000 ed25519e_sk1lq2zcyms6exxan0xx2gufjt2hdgsxmytgv5fl7nd4agzc89e6eympdwrhc2e59zkhqrpp3gnc4cfp5kf9xqufr9kn7ddl5uvtdsr84q5rg3ge
@@ -738,25 +736,26 @@ Get the list of stake pools.
 #+end_src
 
 
-You can see that our =Node-id= is part o of the list.
+You can see that our =Node-id= is in the list.
 
 ** 4.2 Restart Jormungandr as a stake pool
+
+   Go to the terminal where Jormungandr is running and stop the server.
+
    Now you can start the node as a *leader candidate*, using the
    =--secret node_secret.yaml= parameter. The =node_secret.yaml= file
    was automatically created in the same location as
    =createStakePool.sh=.
 
-   In order to do that return to the same terminal where Jormungandr is running and stop the server.
-   restart it with the secret parameter.
+   Restart Jormungandr with the secret parameter.
 
    #+begin_src sh  :tangle ./doitlive/win01ch4.sh :exports code :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
      ./jormungandr --genesis-block-hash $(cat genesis-hash.txt) --config ./stakepool-config.yaml --secret ./node_secret.yaml
    #+end_src
 
 * 5. Register stake pool to the Cardano Foundation
-In order for your stake pool to appear as part of the Daedalus interface. So that ADA Holders can delegate stake to you.
-You can check the official process here: [[https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry][Github Incentivized Testnet Stake Pool Registry]]
 
+Check the official registration process here: [[https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry][ Github Incentivized Testnet Stake Pool Registry]] to make your stake pool appear as part of the Daedalus interface, so that ADA Holders can delegate their stake to your stake pool.
 
 Let's follow the process for our running example.
 
@@ -772,10 +771,9 @@ Let's follow the process for our running example.
 
 ** 5.1 Fork and clone the Cardano Foundation Registry repository.
 
-   On GitHub go to the [[https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry][Cardano Foundation Incentivized Testnet Stake Pool Registry]]
-   And then create a [[https://help.github.com/en/github/getting-started-with-github/fork-a-repo][fork in your own account]].
+   On GitHub go to the [[https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry][Cardano Foundation Incentivized Testnet Stake Pool Registry]] and create a [[https://help.github.com/en/github/getting-started-with-github/fork-a-repo][fork in your own account]].
 
-   Then clone your fork
+   Clone your fork in your local machine.
 
    #+name: GITHUB_USERNAME
    #+begin_src sh  :tangle ./doitlive/win02ch05.sh  :exports none :results value org :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
@@ -792,16 +790,16 @@ Let's follow the process for our running example.
    #+begin_src sh
    Cloning into 'incentivized-testnet-stakepool-registry'...
    remote: Enumerating objects: 33, done.
-   (1/33)        remote: Counting objects:   6% (2/33)        remote: Counting objects:   9% (3/33)        remote: Counting objects:  12% (4/33)        remote: Counting objects:  15% (5/33)        remote: Counting objects:  18% (6/33)        remote: Counting objects:  21% (7/33)        remote: Counting objects:  24% (8/33)        remote: Counting objects:  27% (9/33)        remote: Counting objects:  30% (10/33)        remote: Counting objects:  33% (11/33)        remote: Counting objects:  36% (12/33)        remote: Counting objects:  39% (13/33)        remote: Counting objects:  42% (14/33)        remote: Counting objects:  45% (15/33)        remote: Counting objects:  48% (16/33)        remote: Counting objects:  51% (17/33)        remote: Counting objects:  54% (18/33)        remote: Counting objects:  57% (19/33)        remote: Counting objects:  60% (20/33)        remote: Counting objects:  63% (21/33)        remote: Counting objects:  66% (22/33)        remote: Counting objects:  69% (23/33)        remote: Counting objects:  72% (24/33)        remote: Counting objects:  75% (25/33)        remote: Counting objects:  78% (26/33)        remote: Counting objects:  81% (27/33)        remote: Counting objects:  84% (28/33)        remote: Counting objects:  87% (29/33)        remote: Counting objects:  90% (30/33)        remote: Counting objects:  93% (31/33)        remote: Counting objects:  96% (32/33)        remote: Counting objects: 100% (33/33)        remote: Counting objects: 100% (33/33), done.
-   (1/28)        remote: Compressing objects:   7% (2/28)        remote: Compressing objects:  10% (3/28)        remote: Compressing objects:  14% (4/28)        remote: Compressing objects:  17% (5/28)        remote: Compressing objects:  21% (6/28)        remote: Compressing objects:  25% (7/28)        remote: Compressing objects:  28% (8/28)        remote: Compressing objects:  32% (9/28)        remote: Compressing objects:  35% (10/28)        remote: Compressing objects:  39% (11/28)        remote: Compressing objects:  42% (12/28)        remote: Compressing objects:  46% (13/28)        remote: Compressing objects:  50% (14/28)        remote: Compressing objects:  53% (15/28)        remote: Compressing objects:  57% (16/28)        remote: Compressing objects:  60% (17/28)        remote: Compressing objects:  64% (18/28)        remote: Compressing objects:  67% (19/28)        remote: Compressing objects:  71% (20/28)        remote: Compressing objects:  75% (21/28)        remote: Compressing objects:  78% (22/28)        remote: Compressing objects:  82% (23/28)        remote: Compressing objects:  85% (24/28)        remote: Compressing objects:  89% (25/28)        remote: Compressing objects:  92% (26/28)        remote: Compressing objects:  96% (27/28)        remote: Compressing objects: 100% (28/28)        remote: Compressing objects: 100% (28/28), done.
-   (1/33)   Receiving objects:   6% (2/33)   Receiving objects:   9% (3/33)   Receiving objects:  12% (4/33)   Receiving objects:  15% (5/33)   Receiving objects:  18% (6/33)   Receiving objects:  21% (7/33)   Receiving objects:  24% (8/33)   Receiving objects:  27% (9/33)   Receiving objects:  30% (10/33)   Receiving objects:  33% (11/33)   Receiving objects:  36% (12/33)   Receiving objects:  39% (13/33)   Receiving objects:  42% (14/33)   Receiving objects:  45% (15/33)   Receiving objects:  48% (16/33)   remote: Total 33 (delta 13), reused 8 (delta 1), pack-reused 0
-   (17/33)   Receiving objects:  54% (18/33)   Receiving objects:  57% (19/33)   Receiving objects:  60% (20/33)   Receiving objects:  63% (21/33)   Receiving objects:  66% (22/33)   Receiving objects:  69% (23/33)   Receiving objects:  72% (24/33)   Receiving objects:  75% (25/33)   Receiving objects:  78% (26/33)   Receiving objects:  81% (27/33)   Receiving objects:  84% (28/33)   Receiving objects:  87% (29/33)   Receiving objects:  90% (30/33)   Receiving objects:  93% (31/33)   Receiving objects:  96% (32/33)   Receiving objects: 100% (33/33)   Receiving objects: 100% (33/33), 12.19 KiB | 304.00 KiB/s, done.
-   (0/13)   Resolving deltas:  53% (7/13)   Resolving deltas:  76% (10/13)   Resolving deltas:  84% (11/13)   Resolving deltas: 100% (13/13)   Resolving deltas: 100% (13/13), done.
+   (1/33)remote: Counting objects:   6% (2/33)         Counting objects:   9% (3/33)remote:g objects:  12% (4/33)         Countins:  15% (5/33)remote:g object(6/33)         Countins:  21%       remote: g objects(8/33)  emote: Counting objects:  27% (9/33)        rounting objec (10/33)remote:  objects:  33% (11/33)         Counting:  36% (12/33)        remote:g objects13/33)remote: Countins:  42% (       Counting object(15/33)  emote: Cg objects:  48% (1       rounting objects:  51% (17/33)        remotects:  54% (18/33)       : Counting   53)        remoteng objects:0/33)        remote: Countits:  63% (2   e: Counting objec (22/33)   moting objects:  69%        reuntingcts:  72% (24/33)   remote: Cobjects:  75% (25/33)        remote:g o 78% (26/33)        remoting object/33)        remote: Counects:  84 remote: Counting obj7% (29/33)    oteng objects:  93)        remntits:  93% (31/3  remote: Coujects:  (32/33)        re: Counting ob00% (33/33)        remote: Countits: 133), done.
+   (1/28)remote: Compressing objects:   7% (2/28)         Compressing objects:  10% (3/28)remote:sing objects:  14% (4/28)         Compresects:  17% (5/28)remote:sing obj1% (6/28)         Compresects:  2)        remote:sing obj8% (8/28 remote: Compressing obects:  32% (9/2)       : Compressing objects:  35% (10/28)        remotessing obje% (11/28 remote: Comprbjects:  42% (12/2)       : Compressing o 46% (13/28)        remotessing objects: /28)remote: Comprejects:  53% (15     Compressing ob57% (16/28)    ote: Comsing objects:  60% 28)        rempressing objects:  64% (18/28)        rem objects:  67% (19/28) remote: Compressing20/28)        Compressing objects21/28)        remote: ing objects:  78% (emote: Compresscts:  82% (23/28)  ompressing obje% (24/28)        romng objects:  89% )        remote: Cng objects:  92% (26/28)        remotessits:  96% (27/28)     te: Compresec (28/28)        remoressing objects: 10.
+   (1/33)Receiving objects:   6% (2/33)   ceiving objects:   9% (3/33)Reving objects:  12% (4/33)   ceig objects:  15% (5/33)Revinbjects:  18% (6/33)   ceig octs:  21% (7/33)   Revinbje:  24% (8/33)   Receig octs27% (9/33)   Receivinbje:   (10/33)   Receiving octs33%1/33)   Receiving obje:   (13)   Receiving objects39%3/3  Receiving objects:  4 (143) Receiving objects:  45% (15/33)   eiving objects:  48% (33)rem: Total 33 (delta 13), reuse (de 1), pack-reused 0
+   (17/33)Receiving objects:  54% (18/33)   ceiving objects:  57% (19/33)Reving objects:  60% (20/33)   ceig objects:  63% (21/33)Revinbjects:  66% (22/33)   ceig octs:  69% (23/33)   Revinbje:  72% (24/33)   Receig octs75% (25/33)   Receivinbje:   (26/33)   Receiving octs81%7/33)   Receiving obje:   (23)   Receiving objects87%9/3  Receiving objects:  9 (303) Receiving objects:  93% (31/33)   eiving objects:  96% (33)Recing objects: 100% (33/33)   ceiv objects: 100% (33/33), 12.1iB |4.00 KiB/s, done.
+   (0/13)Resolving deltas:  53% (7/13)   solving deltas:  76% (10/13)Reving deltas:  84% (11/13)   solg deltas: 100% (13/13)Revineltas: 100% (13/13), done.
    #+end_src
 
 ** 5.2 Create stake pool JSON file
 
-   In order to register with the Cardano Foundation we need to create a json file with the following fields:
+   To register with the Cardano Foundation we need to create a json file with the following fields:
    - owner :: public key of the stake pool operator. Created on step  [[#create-an-account-address-using-the-script][3.1]] of this guide.
    - name :: name your stake pool
    - ticker :: three to five characters that identify your stake pool
@@ -814,7 +812,7 @@ Let's follow the process for our running example.
    envsubst < ../utils/registry_template.json > ./incentivized-testnet-stakepool-registry/registry/$PUBLIC_KEY_PK.json
    #+end_src
 
-   With that information the json file for this example is:
+   The json file for this example is:
    #+begin_src sh  :tangle ./doitlive/win02ch05.sh :exports result :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool/
    cat ./incentivized-testnet-stakepool-registry/registry/$PUBLIC_KEY_PK.json
    #+end_src
@@ -830,13 +828,12 @@ Let's follow the process for our running example.
    }
    #+end_src
 
-
-   Your file should be named the same way as your public key with *.json* extension
+   Name your file as your public key with *.json* extension
 
 
 ** 5.3 Sign with your owner Private Key
    We need to make sure that the person making the submission is the owner of the Public key in the json file.
-   The way to do that is to sign the submission with the secret key created on step [[#create-an-account-address-using-the-script][3.1]] of this guide.
+   To do that we need to sign the submission with the secret key created on step [[#create-an-account-address-using-the-script][3.1]] of this guide.
 
    The next command requires the Secret Key to be stored in a file so let's just save it in a file named =owner.prv=
 
@@ -846,21 +843,21 @@ Let's follow the process for our running example.
 
    #+RESULTS:
 
-   Now to sign the .json file we would use
+   To sign the .json file we use:
    #+name: signed_stakepool
    #+begin_src sh  :tangle ./doitlive/win02ch05.sh :exports result :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool/
    ./jcli key sign --secret-key owner.prv --output ./incentivized-testnet-stakepool-registry/registry/$PUBLIC_KEY_PK.sig ./incentivized-testnet-stakepool-registry/registry/$PUBLIC_KEY_PK.json
    #+end_src
 
 ** 5.4 Verify that we have the correct files.
-   Now just let's do a sanity check and make sure we have both files that will be required:
+   Let's do a sanity check and make sure we have both files that will be required:
 
    #+name: json_and_signature
    #+begin_src sh  :tangle ./doitlive/win02ch05.sh :exports both :results output :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool/
    ls  ./incentivized-testnet-stakepool-registry/registry/* | sort
    #+end_src
 
-   You should see two files one with .json and one with .sig extension.
+   You should see two files, one with .json and one with .sig extension.
    #+RESULTS: json_and_signature
    #+begin_src sh
    ./incentivized-testnet-stakepool-registry/registry/ed25519_pk1nm8frtnm8r8yf7tn920akuhtw5s2xaug4mepk84kn3l9znansh0qn206ej.json
@@ -944,7 +941,7 @@ Let's follow the process for our running example.
 
 
 * 7. Monitor Delegated Stake
-  At it's most basic is easy to see how much delegated stake the pool has.
+  It is easy to see how much delegated stake the pool has.
   Simply get the balance of the stake pool account and it displays the delegated stake
 
     #+begin_src sh  :tangle ./doitlive/win02ch07.sh :exports none :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
