@@ -49,7 +49,7 @@
 
 # Stake pool operator How-To
 
-A Stake pool operator plays a fundamental role in the health and decentralization of the Cardano Blockchain. In the following sections we are going to see **How to become a stake pool operator**.
+A stake pool operator plays a fundamental role in the health and decentralization of the Cardano blockchain. In the following sections we are going to see **How to become a stake pool operator**.
 
 Keep in mind the following diagram as we go along the process to create a stale pool
 
@@ -68,7 +68,7 @@ There are hardware, operating system and software requirements to set up a stake
 ## 1.1 Hardware
 
 -   4 GB of RAM
--   A Good network connection and about 1 GB of \* bandwidth / hour
+-   A good network connection and about 1 GB of \* bandwidth / hour
 -   A public ip4 address
 -   Processor speed is not a significant factor
 
