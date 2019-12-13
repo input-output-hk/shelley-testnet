@@ -266,7 +266,7 @@ It returns the version of JCLI
 
 #+RESULTS: jcli-version
 #+begin_src sh
-$ jcli 0.8.0-rc7
+$ jcli 0.8.0
 #+end_src
 
 Victory! JCLI is available to us.
