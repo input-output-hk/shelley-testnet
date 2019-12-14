@@ -14,6 +14,7 @@
 #+EXPORT_FILE_NAME: ../stake_pool_operator_how_to.md
 #+PROPERTY: header-args :eval never-export
 #+PROPERTY: header-args :cache yes
+#+OPTIONS: ^:nil
 
 * 0 How to use this org file                                       :noexport:
   This org file is the single source for multiple documents:
