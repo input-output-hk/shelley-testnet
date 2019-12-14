@@ -4,44 +4,44 @@
   - [1.2 Operating System](#operating-system)
   - [1.3 Software (Jormungandr)](#software-jormungandr)
 - [2. Start Jormungandr node](#start-jormungandr-node)
-  - [2.1 Find the latest version of the testnet](#org5e9a7d2)
+  - [2.1 Find the latest version of the testnet](#orgb421702)
   - [2.2 Download Jormungandr from GitHub](#download-jormungandr-from-github)
   - [2.3 Extract the files (in your Terminal or Finder)](#extract-the-files-either-use-terminal-or-finder)
   - [2.4 Verify the files were installed correctly](#verify-the-files-were-installed-correctly)
   - [2.5 Configure your node](#configure-your-node)
     - [2.5.1 Download the config.yaml file](#download-the-config.yaml-file)
-    - [2.5.2 Add stake pool configuration parameters](#orge1f727f)
+    - [2.5.2 Add stake pool configuration parameters](#orgc95aa32)
     - [2.5.3 Create the genesis-hash.txt file](#download-the-genesis-hash.txt-file)
   - [2.6 Start the node](#start-the-node)
   - [2.7 Check that the node is syncing](#check-that-the-node-syncing)
 - [3. Fund stake pool owner account in JCLI](#fund-stake-pool-owner-account-in-jcli)
   - [3.1 Create an account address using the script](#create-an-account-address-using-the-script)
   - [3.2 Send funds to your stake pool account](#send-funds-to-your-stake-pool-account)
-    - [3.2.1 For The Nightly Testnet](#orge5df797)
-    - [3.2.2 For the Incentivized Testnet using Cardano-Wallet CLI](#orgbaee838)
-    - [3.2.3 For the Incentivized Testnet using Daedalus](#orgd580959)
-  - [3.3 Check balance in your stake pool account](#org19537e3)
+    - [3.2.1 For The Nightly Testnet](#org37de2e3)
+    - [3.2.2 For the Incentivized Testnet using Cardano-Wallet CLI](#org825c8de)
+    - [3.2.3 For the Incentivized Testnet using Daedalus](#org0b68e8e)
+  - [3.3 Check balance in your stake pool account](#orgf6e6a78)
 - [4. Create a stake pool certificate in JCLI](#create-a-stake-pool-certificate-in-jcli)
   - [4.1 Download the createStakePool and send-certificate scripts](#create-a-stake-pool-using-a-script)
-  - [4.2 Check the parameters required by the script](#orgac85c9b)
-  - [4.3 Execute the `createStakePool.sh` script](#org040d906)
-  - [4.4 Check that the stake pool is in the  blockchain.](#orgc899ecf)
-  - [4.2 Restart Jormungandr as a stake pool](#org26dbda4)
-- [5. Register stake pool to the Cardano Foundation](#org0fa7a59)
-  - [5.1 Fork and clone the Cardano Foundation Registry repository.](#org1dd95a2)
-  - [5.2 Create stake pool JSON file](#org5b0c0e0)
-  - [5.3 Sign with your owner Private Key](#org3398bad)
-  - [5.4 Verify that we have the correct files.](#org05affcf)
-  - [5.5 Commit files](#orgec43f67)
-  - [5.6 Create Pull Request](#org9755525)
-  - [5.7 Check that the stake pool appears in the Daedalus wallet.](#orgdbdf5b7)
-- [6. Delegate your stake to your stake pool](#orga327501)
-  - [6.1 Download the delegate-account script](#orgfe88b21)
-  - [6.2 Check the parameters required by the script](#org5b0f199)
-  - [6.3 Execute the script](#orgd9b7040)
-  - [6.4 Check that your stake was delegated](#org0b31665)
-- [7. Monitor Delegated Stake](#orgbd91574)
-  - [7.1 Check delegated stake through JCLI](#orgeb30ee8)
+  - [4.2 Check the parameters required by the script](#org5cd6935)
+  - [4.3 Execute the `createStakePool.sh` script](#org88eff96)
+  - [4.4 Check that the stake pool is in the  blockchain.](#org900038b)
+  - [4.2 Restart Jormungandr as a stake pool](#org7593c36)
+- [5. Register stake pool to the Cardano Foundation](#org8674fac)
+  - [5.1 Fork and clone the Cardano Foundation Registry repository.](#orga08f6f3)
+  - [5.2 Create stake pool JSON file](#org7df87df)
+  - [5.3 Sign with your owner Private Key](#org25ce4e1)
+  - [5.4 Verify that we have the correct files.](#org5501119)
+  - [5.5 Commit files](#org27ecc9b)
+  - [5.6 Create Pull Request](#org646a636)
+  - [5.7 Check that the stake pool appears in the Daedalus wallet.](#org54ddf2b)
+- [6. Delegate your stake to your stake pool](#orgff7cec9)
+  - [6.1 Download the delegate-account script](#org3615399)
+  - [6.2 Check the parameters required by the script](#org2632716)
+  - [6.3 Execute the script](#org8260ea8)
+  - [6.4 Check that your stake was delegated](#orgf604bb3)
+- [7. Monitor Delegated Stake](#org3273149)
+  - [7.1 Check delegated stake through JCLI](#orgf82e7e4)
 
 
 
@@ -49,7 +49,7 @@
 
 # Stake pool operator How-To
 
-A stake pool operator plays a fundamental role in the health and decentralization of the Cardano blockchain. In the following sections we are going to see **How to become a stake pool operator**.
+A Stake pool operator plays a fundamental role in the health and decentralization of the Cardano Blockchain. In the following sections we are going to see **How to become a stake pool operator**.
 
 Keep in mind the following diagram as we go along the process to create a stale pool
 
@@ -68,7 +68,7 @@ There are hardware, operating system and software requirements to set up a stake
 ## 1.1 Hardware
 
 -   4 GB of RAM
--   A good network connection and about 1 GB of \* bandwidth / hour
+-   A Good network connection and about 1 GB of \* bandwidth / hour
 -   A public ip4 address
 -   Processor speed is not a significant factor
 
@@ -101,7 +101,7 @@ Latest version of Jormungandr and JCLI. Just follow along in the next section. O
 First let's download, configure and start the Jormungandr node. Note: If you have any issues while installing Jormungandr and JCLI, please refer to our support portal [macOS/Linux instructions](https://iohk.zendesk.com/hc/en-us/articles/360036898153).
 
 
-<a id="org5e9a7d2"></a>
+<a id="orgb421702"></a>
 
 ## 2.1 Find the latest version of the testnet
 
@@ -164,7 +164,7 @@ Victory! JCLI is available to us.
 From the [Jormungandr Configurations page](https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-finished/download/1/index.html), save the config.yaml. We will use this file to start Jormungandr, among other things it has the list of trusted peers from which we are going to download our own copy of the blockchain.
 
 
-<a id="orge1f727f"></a>
+<a id="orgc95aa32"></a>
 
 ### 2.5.2 Add stake pool configuration parameters
 
@@ -283,7 +283,7 @@ chmod +x createAddress.sh
 ./createAddress.sh account | tee stakepool_owner_account.txt
 ```
 
-The script returns your cryptographic keys and an address of type account. We are saving them in the file stakepool<sub>owner</sub><sub>account.txt</sub> **IT IS EXTREMELY IMPORTANT THAT YOU SAVE YOUR KEYS FOR FUTURE USE**
+The script returns your cryptographic keys and an address of type account. We are saving them in the file stakepool\_owner\_account.txt **IT IS EXTREMELY IMPORTANT THAT YOU SAVE YOUR KEYS FOR FUTURE USE**
 
 ```sh
 PRIVATE_KEY_SK: ed25519e_sk1lq2zcyms6exxan0xx2gufjt2hdgsxmytgv5fl7nd4agzc89e6eympdwrhc2e59zkhqrpp3gnc4cfp5kf9xqufr9kn7ddl5uvtdsr84q5rg3ge
@@ -298,12 +298,12 @@ ADDRESS:        addr1sk0vaydw0vuvu38ewv4flkmjad6jpgmh3zh0yxc7k6w8u520kwzaus7z93h
 
 Depending on when you are reading this How-to, you will have three options to finance your account.
 
-1.  Using the Faucet in the itn<sub>rewards</sub><sub>v1</sub> testnet with test tokens.
+1.  Using the Faucet in the itn\_rewards\_v1 testnet with test tokens.
 2.  Using the Cardano-Wallet with command line.
 3.  Using Daedalus.
 
 
-<a id="orge5df797"></a>
+<a id="org37de2e3"></a>
 
 ### 3.2.1 For The Nightly Testnet
 
@@ -318,21 +318,21 @@ curl -X POST https://faucet.itn_rewards_v1.jormungandr-testnet.iohkdev.io/send-m
 ```
 
 
-<a id="orgbaee838"></a>
+<a id="org825c8de"></a>
 
 ### 3.2.2 For the Incentivized Testnet using Cardano-Wallet CLI
 
 The autorative source for funding in the Incentivized testnet is this article: [How to Register Your Stake Pool](https://github.com/cardano-foundation/incentivized-testnet-stakepool-registry/wiki/How-to-Register-Your-Stake-Pool#step-3-fund-your-account) follow the tutorial along and come back, once you have sent yourself some funds.
 
 
-<a id="orgd580959"></a>
+<a id="org0b68e8e"></a>
 
 ### 3.2.3 For the Incentivized Testnet using Daedalus
 
 With the Daedalus version for the Incentivized testnet you will be able to finance your account directly from your wallet sending funds to your `$ACCOUNT_ADDRESS`.
 
 
-<a id="org19537e3"></a>
+<a id="orgf6e6a78"></a>
 
 ## 3.3 Check balance in your stake pool account
 
@@ -369,7 +369,7 @@ chmod +x send-certificate.sh
 ```
 
 
-<a id="orgac85c9b"></a>
+<a id="org5cd6935"></a>
 
 ## 4.2 Check the parameters required by the script
 
@@ -388,10 +388,10 @@ A value that can be set to limit the pool's Tax.
 The Secret key of the Source address
 ```
 
-For a detailed explanation of the TAX<sub>VALUE</sub>, TAX<sub>RATIO</sub> and TAX<sub>LIMIT</sub> parameters. check this [article](https://input-output-hk.github.io/jormungandr/stake_pool/registering_stake_pool.html). Remember the quantities are in **Lovelaces** i.e. 1 ADA = 1,000,000 Lovelace.
+For a detailed explanation of the TAX\_VALUE, TAX\_RATIO and TAX\_LIMIT parameters. check this [article](https://input-output-hk.github.io/jormungandr/stake_pool/registering_stake_pool.html). Remember the quantities are in **Lovelaces** i.e. 1 ADA = 1,000,000 Lovelace.
 
 
-<a id="org040d906"></a>
+<a id="org88eff96"></a>
 
 ## 4.3 Execute the `createStakePool.sh` script
 
@@ -489,7 +489,7 @@ TAX_LIMIT:        1000000
 If everything is fine and you did not receive any error, the last line of the script output is your `Stake Pool Node ID`. Now you can check if your stake pool id appears in the list of available stake pools by executing the below command.
 
 
-<a id="orgc899ecf"></a>
+<a id="org900038b"></a>
 
 ## 4.4 Check that the stake pool is in the  blockchain.
 
@@ -502,7 +502,7 @@ Get the list of stake pools.
 You can see that our `Node-id` is in the list.
 
 
-<a id="org26dbda4"></a>
+<a id="org7593c36"></a>
 
 ## 4.2 Restart Jormungandr as a stake pool
 
@@ -517,7 +517,7 @@ Restart Jormungandr with the secret parameter.
 ```
 
 
-<a id="org0fa7a59"></a>
+<a id="org8674fac"></a>
 
 # 5. Register stake pool to the Cardano Foundation
 
@@ -526,7 +526,7 @@ Check the official registration process here: [ Github Incentivized Testnet Stak
 Let's follow the process for our running example.
 
 
-<a id="org1dd95a2"></a>
+<a id="orga08f6f3"></a>
 
 ## 5.1 Fork and clone the Cardano Foundation Registry repository.
 
@@ -541,7 +541,7 @@ git clone git@github.com:$GITHUB_USERNAME/incentivized-testnet-stakepool-registr
 ```
 
 
-<a id="org5b0c0e0"></a>
+<a id="org7df87df"></a>
 
 ## 5.2 Create stake pool JSON file
 
@@ -551,7 +551,7 @@ To register with the Cardano Foundation we need to create a json file with the f
 -   **name:** name your stake pool
 -   **ticker:** three to five characters that identify your stake pool
 -   **homepage:** your website, where you can inform the public about the advantages of your stake pool.
--   **pledge<sub>address</sub>:** account address of your stake pool. Created on step [3.1](#create-an-account-address-using-the-script) of this guide.
+-   **pledge\_address:** account address of your stake pool. Created on step [3.1](#create-an-account-address-using-the-script) of this guide.
 
 The json file for this example is:
 
@@ -572,7 +572,7 @@ cat ./incentivized-testnet-stakepool-registry/registry/$PUBLIC_KEY_PK.json
 Name your file as your public key with **.json** extension
 
 
-<a id="org3398bad"></a>
+<a id="org25ce4e1"></a>
 
 ## 5.3 Sign with your owner Private Key
 
@@ -591,7 +591,7 @@ To sign the .json file we use:
 ```
 
 
-<a id="org05affcf"></a>
+<a id="org5501119"></a>
 
 ## 5.4 Verify that we have the correct files.
 
@@ -609,7 +609,7 @@ You should see two files, one with .json and one with .sig extension.
 ```
 
 
-<a id="orgec43f67"></a>
+<a id="org27ecc9b"></a>
 
 ## 5.5 Commit files
 
@@ -625,26 +625,26 @@ cd ../../
 ```
 
 
-<a id="org9755525"></a>
+<a id="org646a636"></a>
 
 ## 5.6 Create Pull Request
 
 Now just go to the normal GitHub user interface and create a [pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) as you would do on any other github project.
 
 
-<a id="orgdbdf5b7"></a>
+<a id="org54ddf2b"></a>
 
 ## 5.7 Check that the stake pool appears in the Daedalus wallet.
 
 Once the Cardano Foundation approves your `pull request`, you should see your stake pool listed in the delegation interface of Daedalus.
 
 
-<a id="orga327501"></a>
+<a id="orgff7cec9"></a>
 
 # 6. Delegate your stake to your stake pool
 
 
-<a id="orgfe88b21"></a>
+<a id="org3615399"></a>
 
 ## 6.1 Download the delegate-account script
 
@@ -654,7 +654,7 @@ chmod +x delegate-account.sh
 ```
 
 
-<a id="org5b0f199"></a>
+<a id="org2632716"></a>
 
 ## 6.2 Check the parameters required by the script
 
@@ -670,7 +670,7 @@ The Secret key of the Account address
 ```
 
 
-<a id="orgd9b7040"></a>
+<a id="org8260ea8"></a>
 
 ## 6.3 Execute the script
 
@@ -679,7 +679,7 @@ The Secret key of the Account address
 ```
 
 
-<a id="org0b31665"></a>
+<a id="orgf604bb3"></a>
 
 ## 6.4 Check that your stake was delegated
 
@@ -699,14 +699,14 @@ value: 10000000000
 ```
 
 
-<a id="orgbd91574"></a>
+<a id="org3273149"></a>
 
 # 7. Monitor Delegated Stake
 
 It is easy to see how much delegated stake the pool has. Simply get the balance of the stake pool account and it displays the delegated stake
 
 
-<a id="orgeb30ee8"></a>
+<a id="orgf82e7e4"></a>
 
 ## 7.1 Check delegated stake through JCLI
 
