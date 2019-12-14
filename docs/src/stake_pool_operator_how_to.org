@@ -25,8 +25,8 @@
    Since I don't seem to understand how var and tangle work I need to replace this stings
 
    #+begin_src sh
-   sed -i 's/v0.8.0/v0.8.0/g' ./stake_pool_operator_how_to.org
-   sed -i 's/legacy/legacy/g' ./stake_pool_operator_how_to.org
+   sed -i 's/v0.8.2/v0.8.2/g' ./stake_pool_operator_how_to.org
+   sed -i 's/itn_rewards_v1/itn_rewards_v1/g' ./stake_pool_operator_how_to.org
    #+end_src
 
 
@@ -205,7 +205,7 @@ open https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-fi
 #+end_src
 
    #+begin_src sh :exports none :tangle ./doitlive/win01ch2.sh :dir ~/
-   open https://github.com/input-output-hk/jormungandr/releases/v0.8.0/
+   open https://github.com/input-output-hk/jormungandr/releases/v0.8.2/
    #+end_src
 
 ** 2.2 Download Jormungandr from GitHub
@@ -220,7 +220,7 @@ open https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-fi
    =...-x86_64-apple-darwin.tar.gz=
 
 #+begin_src sh :exports none :tangle ./doitlive/win01ch2.sh :session jor-server  :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
-curl -sLOJ https://github.com/input-output-hk/jormungandr/releases/download/v0.8.0/jormungandr-v0.8.0-x86_64-unknown-linux-gnu.tar.gz
+curl -sLOJ https://github.com/input-output-hk/jormungandr/releases/download/v0.8.2/jormungandr-v0.8.2-x86_64-unknown-linux-gnu.tar.gz
 #+end_src
 
 #+RESULTS:
@@ -234,7 +234,7 @@ curl -sLOJ https://github.com/input-output-hk/jormungandr/releases/download/v0.8
    you downloaded the file and execute the following command to uncompress it:
 #+Name: extracted_files
 #+begin_src sh :exports code :tangle ./doitlive/win01ch2.sh :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
-tar -xzvf jormungandr-v0.8.0-x86_64-unknown-linux-gnu.tar.gz
+tar -xzvf jormungandr-v0.8.2-x86_64-unknown-linux-gnu.tar.gz
 #+end_src
 
 #+RESULTS: extracted_files
@@ -266,7 +266,7 @@ It returns the version of JCLI
 
 #+RESULTS: jcli-version
 #+begin_src sh
-$ jcli 0.8.0
+$ jcli 0.8.2
 #+end_src
 
 Victory! JCLI is available to us.
@@ -286,7 +286,7 @@ We will use this file to start Jormungandr, among other things it has the list o
 #+name: doitlive-open-website-with-testnet-instructions
 #+begin_src sh  :tangle ./doitlive/win01ch2.sh :exports none :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
 open https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandr-deployment/latest-finished/download/1/index.html
-curl -sLOJ https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandrConfigs.legacy/latest/download/1/legacy-config.yaml
+curl -sLOJ https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandrConfigs.itn_rewards_v1/latest/download/1/itn_rewards_v1-config.yaml
 #+end_src
 #+RESULTS:
 
@@ -294,7 +294,7 @@ curl -sLOJ https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandrConfigs.legacy/
 Since we are setting up a stake pool we need to add our public IP, listen address and the storage location to the configuration file.
 
 #+begin_src sh :exports none :tangle ./doitlive/win01ch2.sh :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
-   tail -n +14 ./legacy-config.yaml | cat ./templates/stakepool_config_addenda.json - > ./stakepool-config.yaml
+   tail -n +14 ./itn_rewards_v1-config.yaml | cat ./templates/stakepool_config_addenda.json - > ./stakepool-config.yaml
    open https://www.canyouseeme.org/
 #+end_src
 
@@ -333,7 +333,7 @@ for example:
 
 #+name: doitlive-genesis-hash
 #+begin_src sh  :tangle ./doitlive/win01ch2.sh :exports none :results output :session jor-server :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
-curl -sLOJ https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandrConfigs.legacy/latest/download/2/genesis-hash.txt
+curl -sLOJ https://hydra.iohk.io/job/Cardano/iohk-nix/jormungandrConfigs.itn_rewards_v1/latest/download/2/genesis-hash.txt
 #+end_src
 
 Once you have created the genesis-hash.txt file, check its contents to make sure it matches the one dispalyed in Jormungandr Configurations page.
@@ -487,7 +487,7 @@ export ACCOUNT_ADDRESS=$(cat stakepool_owner_account.txt | grep -Po "(addr[0-9a-
 
 Depending on when you are reading this How-to, you will have three options to finance your account.
 
-1. Using the Faucet in the legacy testnet with test tokens.
+1. Using the Faucet in the itn_rewards_v1 testnet with test tokens.
 2. Using the Cardano-Wallet with command line.
 3. Using Daedalus.
 
@@ -497,7 +497,7 @@ Funding your account for the Nightly testnet is simple, it has a Faucet that dis
 
 #+name: faucet_results
 #+begin_src sh  :tangle ./doitlive/win02ch03.sh :exports both :results output code :session jcli-client :dir /ssh:agarciafdz@165.227.57.5:/home/agarciafdz/stakepool
-curl -X POST https://faucet.legacy.jormungandr-testnet.iohkdev.io/send-money/$ACCOUNT_ADDRESS
+curl -X POST https://faucet.itn_rewards_v1.jormungandr-testnet.iohkdev.io/send-money/$ACCOUNT_ADDRESS
 #+end_src
 
 #+RESULTS: faucet_results
