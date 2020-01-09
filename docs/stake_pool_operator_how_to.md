@@ -561,12 +561,12 @@ cat ./incentivized-testnet-stakepool-registry/registry/$PUBLIC_KEY_PK.json
 
 ```js
 {
-'owner': 'ed25519_pk1nm8frtnm8r8yf7tn920akuhtw5s2xaug4mepk84kn3l9znansh0qn206ej',
-'name': 'Example stake pool name',
-'ticker': 'EXAMP',
-'homepage': 'https://example.org',
-'pledge_address': 'addr1sk0vaydw0vuvu38ewv4flkmjad6jpgmh3zh0yxc7k6w8u520kwzaus7z93h'
-}
+  "owner": "ed25519_pk1nm8frtnm8r8yf7tn920akuhtw5s2xaug4mepk84kn3l9znansh0qn206ej",
+  "name": "Example Name",
+  "ticker": "EXAMP",
+  "homepage": "https://example.org",
+  "pledge_address": "addr1sk0vaydw0vuvu38ewv4flkmjad6jpgmh3zh0yxc7k6w8u520kwzaus7z93h"
+} 
 ```
 
 Name your file as your public key with **.json** extension
