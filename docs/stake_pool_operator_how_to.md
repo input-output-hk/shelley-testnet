@@ -51,7 +51,7 @@
 
 A Stake pool operator plays a fundamental role in the health and decentralization of the Cardano Blockchain. In the following sections we are going to see **How to become a stake pool operator**.
 
-Keep in mind the following diagram as we go along the process to create a stale pool
+Keep in mind the following diagram as we go along the process to create a stake pool
 
 ![img](./images/stakepool_operator_journey.svg)
 
